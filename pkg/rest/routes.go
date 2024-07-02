@@ -4,12 +4,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Routes(router *gin.Engine) {
-	// Rutas públicas
-	public := router.Group("/api")
-
-	// Rutas privadas (requieren autenticación, etc.)
+func Routes(h *Handler) *gin.Engine {
+	r := gin.Default()
 
 	// Ruta de ping
-	public.GET("/ping", PingHandler)
+	r.GET("/ping", h.PingHandler)
+
+	// Rutas de órdenes
+
+	r.GET("/orders/:id", h.GetOrder)
+	r.GET("/orders/user/:user_id", h.GetOrdersByUser)
+	r.POST("/orders/", h.CreateOrder)
+	r.PUT("/orders/:id/advance", h.AdvanceOrder)
+
+	return r
 }
