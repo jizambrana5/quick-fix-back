@@ -6,7 +6,7 @@ import (
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
 )
 
-// Order represents the order entity in the database
+// OrderRepo represents the order entity in the database
 type OrderRepo struct {
 	ID             string    `gorm:"primaryKey;autoIncrement"`
 	UserID         uint64    `gorm:"not null"`
@@ -14,7 +14,7 @@ type OrderRepo struct {
 	Status         string    `gorm:"type:varchar(20);not null"`
 	CreatedAt      time.Time `gorm:"autoCreateTime"`
 	UpdatedAt      time.Time `gorm:"autoUpdateTime"`
-	ScheduleTo     time.Time `gorm:"autoUpdateTime"`
+	ScheduleTo     time.Time `gorm:"autoScheduleTime"`
 }
 
 // ToDomain transforms the repository order entity to the domain order entity

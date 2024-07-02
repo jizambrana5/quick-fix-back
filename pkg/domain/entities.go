@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
+)
 
 // OrderStatus represents the possible statuses of an order
 const (
@@ -8,6 +12,7 @@ const (
 	OrderStatusAccepted  Status = "accepted"
 	OrderStatusCompleted Status = "completed"
 	OrderStatusCancelled Status = "cancelled"
+	OrderStatusCreated   Status = "created"
 )
 
 type (
@@ -25,3 +30,18 @@ type (
 	}
 	Status string
 )
+
+func (o Order) IsEmpty() bool {
+	return o == Order{}
+}
+
+func (o Order) Validate() error {
+	if o.Status == OrderStatusCompleted {
+		return errors.OrderCompleted
+	}
+
+	if o.Status == OrderStatusCancelled {
+		return errors.OrderCanceled
+	}
+	return nil
+}

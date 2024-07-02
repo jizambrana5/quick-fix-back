@@ -1,11 +1,10 @@
 module github.com/jizambrana5/quickfix-back
 
-go 1.22
-
-toolchain go1.22.1
+go 1.21.3
 
 require (
 	github.com/gin-gonic/gin v1.10.0
+	github.com/gofrs/uuid v4.4.0+incompatible
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.10
 )

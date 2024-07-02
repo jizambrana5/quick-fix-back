@@ -3,19 +3,18 @@ package rest
 import (
 	"context"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/jizambrana5/quickfix-back/pkg/domain"
+	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
 )
 
 // GetOrder maneja la solicitud GET /orders/:id
 func (h *Handler) GetOrder(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Param("order_id")
 	order, err := h.orderService.GetOrder(context.Background(), id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		handleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, order)
@@ -23,16 +22,31 @@ func (h *Handler) GetOrder(c *gin.Context) {
 
 // GetOrdersByUser maneja la solicitud GET /orders/user/:user_id
 func (h *Handler) GetOrdersByUser(c *gin.Context) {
-	userIDStr := c.Param("user_id")
-	userID, err := strconv.ParseUint(userIDStr, 10, 64)
+	userID, err := ParseUserIDFromRequest(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user ID"})
+		handleError(c, err)
 		return
 	}
 
 	orders, err := h.orderService.GetOrdersByUser(context.Background(), userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		handleError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, orders)
+}
+
+// GetOrderByProfessional maneja la solicitud GET /orders/user/:user_id
+func (h *Handler) GetOrderByProfessional(c *gin.Context) {
+	professionalID, err := ParseProfessionalIDFromRequest(c)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	orders, err := h.orderService.GetOrdersByProfessional(context.Background(), professionalID)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, orders)
@@ -40,32 +54,68 @@ func (h *Handler) GetOrdersByUser(c *gin.Context) {
 
 // CreateOrder maneja la solicitud POST /orders
 func (h *Handler) CreateOrder(c *gin.Context) {
-	var order domain.Order
-	if err := c.ShouldBindJSON(&order); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	var orderReq CreateOrderRequest
+	if err := c.ShouldBindJSON(&orderReq); err != nil {
+		handleError(c, errors.ErrInvalidCreateOrder)
 		return
 	}
-	createdOrder, err := h.orderService.CreateOrder(context.Background(), order)
+
+	if err := orderReq.Validate(); err != nil {
+		handleError(c, err)
+		return
+	}
+
+	createdOrder, err := h.orderService.CreateOrder(context.Background(), orderReq)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		handleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, createdOrder)
 }
 
-// AdvanceOrder maneja la solicitud PUT /orders/:id/status
-func (h *Handler) AdvanceOrder(c *gin.Context) {
-	id := c.Param("id")
-	var input struct {
-		Status string `json:"status"`
-	}
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// AcceptOrder maneja la solicitud PUT /orders/:id/accept
+func (h *Handler) AcceptOrder(c *gin.Context) {
+	orderID, err := ParseOrderIDFromRequest(c)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
-	updatedOrder, err := h.orderService.AdvanceOrder(context.Background(), id, input.Status)
+
+	updatedOrder, err := h.orderService.AcceptOrder(context.Background(), orderID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		handleError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, updatedOrder)
+}
+
+// CompleteOrder maneja la solicitud PUT /orders/:id/complete
+func (h *Handler) CompleteOrder(c *gin.Context) {
+	orderID, err := ParseOrderIDFromRequest(c)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	updatedOrder, err := h.orderService.CompleteOrder(context.Background(), orderID)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, updatedOrder)
+}
+
+// CancelOrder maneja la solicitud PUT /orders/:id/complete
+func (h *Handler) CancelOrder(c *gin.Context) {
+	orderID, err := ParseOrderIDFromRequest(c)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	updatedOrder, err := h.orderService.CancelOrder(context.Background(), orderID)
+	if err != nil {
+		handleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, updatedOrder)

@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"time"
 
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
 	"github.com/jizambrana5/quickfix-back/pkg/rest"
@@ -18,6 +19,7 @@ type Storage interface {
 	FindOrdersByUserID(ctx context.Context, userID uint64) ([]domain.Order, error)
 	FindOrdersByProfessionalID(ctx context.Context, professionalID uint64) ([]domain.Order, error)
 	FindOrdersByStatus(ctx context.Context, status string) ([]domain.Order, error)
+	FindOrdersBySchedule(ctx context.Context, scheduleTo time.Time, userID uint64, professionalID uint64) ([]domain.Order, error) // Ajustado
 }
 
 func NewService(storage Storage) *Service {

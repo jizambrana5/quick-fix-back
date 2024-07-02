@@ -11,11 +11,13 @@ func Routes(h *Handler) *gin.Engine {
 	r.GET("/ping", h.PingHandler)
 
 	// Rutas de órdenes
-
-	r.GET("/orders/:id", h.GetOrder)
+	r.GET("/orders/:order_id", h.GetOrder)
 	r.GET("/orders/user/:user_id", h.GetOrdersByUser)
+	r.GET("/orders/professional/:professional_id", h.GetOrderByProfessional)
 	r.POST("/orders/", h.CreateOrder)
-	r.PUT("/orders/:id/advance", h.AdvanceOrder)
+	r.PUT("/orders/:order_id/accept", h.AcceptOrder)
+	r.PUT("/orders/:order_id/complete", h.CompleteOrder)
+	r.PUT("/orders/:order_id/cancel", h.CancelOrder)
 
 	return r
 }

@@ -2,6 +2,8 @@ package database
 
 import (
 	"context"
+	"errors"
+	"time"
 
 	"gorm.io/gorm"
 
@@ -22,7 +24,10 @@ func NewOrderRepository(db *gorm.DB) *OrderRepository {
 // GetOrder retrieves an order by ID
 func (r *OrderRepository) GetOrder(ctx context.Context, ID string) (domain.Order, error) {
 	var order database.OrderRepo
-	if err := r.DB.WithContext(ctx).Preload("User").Preload("Professional").First(&order, "id = ?", ID).Error; err != nil {
+	if err := r.DB.WithContext(ctx).First(&order, "id = ?", ID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return domain.Order{}, nil
+		}
 		return domain.Order{}, err
 	}
 	return order.ToDomain(), nil
@@ -49,7 +54,7 @@ func (r *OrderRepository) UpdateOrder(ctx context.Context, order domain.Order) (
 // FindOrdersByUserID finds orders by user ID
 func (r *OrderRepository) FindOrdersByUserID(ctx context.Context, userID uint64) ([]domain.Order, error) {
 	var orders []database.OrderRepo
-	if err := r.DB.WithContext(ctx).Preload("User").Preload("Professional").Where("user_id = ?", userID).Find(&orders).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Where("user_id = ?", userID).Find(&orders).Error; err != nil {
 		return nil, err
 	}
 	var domainOrders []domain.Order
@@ -62,7 +67,7 @@ func (r *OrderRepository) FindOrdersByUserID(ctx context.Context, userID uint64)
 // FindOrdersByProfessionalID finds orders by professional ID
 func (r *OrderRepository) FindOrdersByProfessionalID(ctx context.Context, professionalID uint64) ([]domain.Order, error) {
 	var orders []database.OrderRepo
-	if err := r.DB.WithContext(ctx).Preload("User").Preload("Professional").Where("professional_id = ?", professionalID).Find(&orders).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Where("professional_id = ?", professionalID).Find(&orders).Error; err != nil {
 		return nil, err
 	}
 	var domainOrders []domain.Order
@@ -75,8 +80,22 @@ func (r *OrderRepository) FindOrdersByProfessionalID(ctx context.Context, profes
 // FindOrdersByStatus finds orders by status
 func (r *OrderRepository) FindOrdersByStatus(ctx context.Context, status string) ([]domain.Order, error) {
 	var orders []database.OrderRepo
-	if err := r.DB.WithContext(ctx).Preload("User").Preload("Professional").Where("status = ?", status).Find(&orders).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Where("status = ?", status).Find(&orders).Error; err != nil {
 		return nil, err
+	}
+	var domainOrders []domain.Order
+	for _, order := range orders {
+		domainOrders = append(domainOrders, order.ToDomain())
+	}
+	return domainOrders, nil
+}
+
+// FindOrdersBySchedule finds orders by schedule to, user id and professional id
+func (r *OrderRepository) FindOrdersBySchedule(ctx context.Context, scheduleTo time.Time, userID uint64, professionalID uint64) ([]domain.Order, error) {
+	var orders []database.OrderRepo
+	result := r.DB.WithContext(ctx).Where("schedule_to = ? AND user_id = ? AND professional_id = ?", scheduleTo, userID, professionalID).Find(&orders)
+	if result.Error != nil {
+		return nil, result.Error
 	}
 	var domainOrders []domain.Order
 	for _, order := range orders {
