@@ -3,37 +3,43 @@ package database
 import (
 	"fmt"
 	"log"
-	"os"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var DB *gorm.DB
 
-func InitDatabase() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+type Config struct {
+	DBHost     string
+	DBUser     string
+	DBPassword string
+	DBName     string
+	DBPort     string
+}
 
-	dbHost := os.Getenv("DB_HOST")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	dbPort := os.Getenv("DB_PORT")
-
-	//TODO: Delete this
-	fmt.Printf("DBHost: %s, DBUser: %s, DBPass: %s, DBName: %s, DBPort: %s", dbHost, dbUser, dbPassword, dbName, dbPort)
-
+func NewRepository(config Config) *gorm.DB {
+	// Construir la cadena de conexión DSN
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
-		dbHost, dbUser, dbPassword, dbName, dbPort)
+		config.DBHost, config.DBUser, config.DBPassword, config.DBName, config.DBPort)
 
-	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	// Abrir la conexión a PostgreSQL
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
-		log.Fatal("Failed to connect to database!", err)
+		log.Fatal("Error connecting to database", err)
+		panic(err)
 	}
 
-	DB = database
+	// AutoMigrate will create the tables, missing columns, and missing indexes.
+	err = db.AutoMigrate(&OrderRepo{})
+	if err != nil {
+		log.Fatal("Error connecting to database", err)
+		panic(err)
+	}
+
+	// Retornar una instancia de OrderRepository con la conexión establecida
+	return db
 }
