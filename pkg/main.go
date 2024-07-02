@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	domain "github.com/jizambrana5/quickfix-back/pkg/domain/auth"
 	"github.com/jizambrana5/quickfix-back/pkg/repository/database"
 	"github.com/jizambrana5/quickfix-back/pkg/rest"
 )
@@ -14,6 +15,9 @@ func main() {
 
 	// Inicializar la conexión a la base de datos
 	database.InitDatabase()
+
+	authSrv := domain.NewService()
+	handler := rest.NewHandler(authSrv)
 
 	// Registrar rutas
 	rest.Routes(r)
