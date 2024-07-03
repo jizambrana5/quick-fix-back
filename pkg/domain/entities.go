@@ -13,6 +13,10 @@ const (
 	OrderStatusCompleted Status = "completed"
 	OrderStatusCancelled Status = "cancelled"
 	OrderStatusCreated   Status = "created"
+
+	Plomero      Profession = "PLOMERO"
+	Gasista      Profession = "GASISTA"
+	Electricista Profession = "ELECTRICISTA"
 )
 
 type (
@@ -29,7 +33,46 @@ type (
 		ScheduleTo time.Time `json:"schedule_to"`
 	}
 	Status string
+
+	User struct {
+		ID        uint64    `json:"id"`
+		Username  string    `json:"username"`
+		Email     string    `json:"email"`
+		Password  string    `json:"-"`
+		Role      string    `json:"role"`
+		CreatedAt time.Time `json:"created_at"`
+		UpdatedAt time.Time `json:"updated_at"`
+	}
+
+	Professional struct {
+		ID          uint64    `json:"id"`
+		Username    string    `json:"username"`
+		Email       string    `json:"email"`
+		Password    string    `json:"-"`
+		Role        string    `json:"role"`
+		Profession  string    `json:"profession"`
+		Description string    `json:"description"`
+		CreatedAt   time.Time `json:"created_at"`
+		UpdatedAt   time.Time `json:"updated_at"`
+		Location    Location  `json:"location"`
+	}
+	Location struct {
+		Department string `json:"department"`
+		District   string `json:"district"`
+	}
+	Profession string
 )
+
+// IsEmpty checks if the User struct is empty
+func (u User) IsEmpty() bool {
+	return u.ID == 0 && u.Username == "" && u.Email == "" && u.Password == "" && u.Role == ""
+}
+
+// IsEmpty checks if the Professional struct is empty
+func (p Professional) IsEmpty() bool {
+	return p.ID == 0 && p.Username == "" && p.Email == "" && p.Password == "" && p.Role == "" && p.Profession == "" &&
+		p.Description == ""
+}
 
 func (o Order) IsEmpty() bool {
 	return o == Order{}

@@ -1,20 +1,23 @@
-package database
+package order
 
 import (
 	"time"
 
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
+	"github.com/jizambrana5/quickfix-back/pkg/repository/database/user"
 )
 
 // OrderRepo represents the order entity in the database
 type OrderRepo struct {
-	ID             string    `gorm:"primaryKey;autoIncrement"`
-	UserID         uint64    `gorm:"not null"`
-	ProfessionalID uint64    `gorm:"not null"`
-	Status         string    `gorm:"type:varchar(20);not null"`
-	CreatedAt      time.Time `gorm:"autoCreateTime"`
-	UpdatedAt      time.Time `gorm:"autoUpdateTime"`
-	ScheduleTo     time.Time `gorm:"autoScheduleTime"`
+	ID             string                `gorm:"primaryKey;autoIncrement"`
+	UserID         uint64                `gorm:"not null"`
+	User           user.UserRepo         `gorm:"foreignKey:UserID"`
+	ProfessionalID uint64                `gorm:"not null"`
+	Professional   user.ProfessionalRepo `gorm:"foreignKey:ProfessionalID"`
+	Status         string                `gorm:"type:varchar(20);not null"`
+	CreatedAt      time.Time             `gorm:"autoCreateTime"`
+	UpdatedAt      time.Time             `gorm:"autoUpdateTime"`
+	ScheduleTo     time.Time             `gorm:"autoScheduleTime"`
 }
 
 // ToDomain transforms the repository order entity to the domain order entity

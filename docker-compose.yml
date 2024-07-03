@@ -42,6 +42,8 @@ services:
       retries: 3
     networks:
       - backend-network
+    volumes:
+      - ./pkg/utils/mendoza_locations.json:/app/pkg/utils/mendoza_locations.json
 volumes:
   postgres-data:
     driver: local
