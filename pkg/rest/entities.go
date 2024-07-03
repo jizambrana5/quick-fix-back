@@ -7,7 +7,9 @@ import (
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
 )
 
-const layout = "2006-01-02 15:04"
+const (
+	layout = "2006-01-02 15:04"
+)
 
 type (
 	CreateOrderRequest struct {
@@ -18,6 +20,25 @@ type (
 
 	AdvanceOrderRequest struct {
 		Status domain.Status `json:"status"`
+	}
+
+	RegisterUserRequest struct {
+		Username string `json:"username"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	RegisterProfessionalRequest struct {
+		Username    string   `json:"username"`
+		Email       string   `json:"email"`
+		Password    string   `json:"password"`
+		Profession  string   `json:"profession"`
+		Description string   `json:"description"`
+		Location    Location `json:"location"`
+	}
+	Location struct {
+		Department string `json:"department"`
+		District   string `json:"district"`
 	}
 )
 
@@ -49,5 +70,51 @@ func (co CreateOrderRequest) Validate() error {
 	if timeInLoc.Before(time.Now().In(loc)) {
 		return errors.ErrInvalidScheduleTo
 	}
+	return nil
+}
+
+func (r RegisterUserRequest) Validate() error {
+	if r.Username == "" {
+		return errors.EmptyUserName
+	}
+	if r.Email == "" {
+		return errors.EmptyEmail
+	}
+	if r.Password == "" {
+		return errors.EmptyPassword
+	}
+	return nil
+}
+
+func (rp RegisterProfessionalRequest) Validate() error {
+	if rp.Username == "" {
+		return errors.EmptyUserName
+	}
+	if rp.Email == "" {
+		return errors.EmptyEmail
+	}
+	if rp.Password == "" {
+		return errors.EmptyPassword
+	}
+
+	// Cargar ubicaciones válidas
+	/*
+		locations, err := utils.LoadLocations("pkg/utils/mendoza_locations.json")
+		if err != nil {
+			return errors2.New("failed to load locations")
+		}
+
+		// Validación de la ubicación
+		err = utils.ValidateLocation(rp.Location.Department, rp.Location.District, locations)
+		if err != nil {
+			return err
+		}
+
+		switch strings.ToUpper(rp.Profession) {
+		case string(domain.Plomero), string(domain.Gasista), string(domain.Electricista):
+			return nil
+		default:
+			return errors.ErrInvalidProfession
+		}*/
 	return nil
 }

@@ -19,5 +19,15 @@ func Routes(h *Handler) *gin.Engine {
 	r.PUT("/orders/:order_id/complete", h.CompleteOrder)
 	r.PUT("/orders/:order_id/cancel", h.CancelOrder)
 
+	// Rutas de registro
+	r.POST("/user/", h.CreateUser)
+	r.GET("/user/:user_id", h.GetUser)
+	r.POST("/professional/", h.CreateProfessional)
+	r.GET("/professional/:professional_id", h.GetProfessional)
+	r.GET("/professionals/:department/:district", h.GetProfessionalsByLocation)
+
+	// Ruta para obtener ubicaciones
+	r.GET("/locations", h.GetLocations)
+
 	return r
 }

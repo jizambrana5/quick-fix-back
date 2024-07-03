@@ -7,6 +7,9 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
+	"github.com/jizambrana5/quickfix-back/pkg/repository/database/order"
+	"github.com/jizambrana5/quickfix-back/pkg/repository/database/user"
 )
 
 var DB *gorm.DB
@@ -33,10 +36,9 @@ func NewRepository(config Config) *gorm.DB {
 		panic(err)
 	}
 
-	// AutoMigrate will create the tables, missing columns, and missing indexes.
-	err = db.AutoMigrate(&OrderRepo{})
-	if err != nil {
-		log.Fatal("Error connecting to database", err)
+	// AutoMigrate creará las tablas, columnas faltantes e índices faltantes
+	if err = db.AutoMigrate(&user.UserRepo{}, &user.ProfessionalRepo{}, &order.OrderRepo{}); err != nil {
+		log.Fatalf("Error auto migrating models: %s", err)
 		panic(err)
 	}
 

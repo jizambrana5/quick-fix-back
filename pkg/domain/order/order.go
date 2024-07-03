@@ -46,7 +46,7 @@ func (s Service) CreateOrder(ctx context.Context, orderReq rest.CreateOrderReque
 	if err != nil {
 		return domain.Order{}, errors.ErrInvalidScheduleTo
 	}
-	loc, err := time.LoadLocation("America/Sao_Paulo")
+	loc, _ := time.LoadLocation("America/Sao_Paulo")
 	timeInLoc := parsedTime.In(loc)
 
 	orders, err := s.storage.FindOrdersBySchedule(ctx, timeInLoc, orderReq.UserID, orderReq.ProfessionalID)

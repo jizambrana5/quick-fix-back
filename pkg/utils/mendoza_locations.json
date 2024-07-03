@@ -1,0 +1,7 @@
+{
+  "locations": {
+    "Godoy Cruz": ["Centro", "Carrodilla", "Las Tortugas"],
+    "Luján de Cuyo": ["Chacras de Coria", "Mayor Drummond", "Perdriel"],
+    "Maipú": ["Coquimbito", "Luzuriaga", "Rodeo del Medio"]
+  }
+}
