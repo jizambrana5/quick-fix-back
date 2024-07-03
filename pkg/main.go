@@ -5,16 +5,22 @@ import (
 	"os"
 
 	"github.com/jizambrana5/quickfix-back/pkg/domain/order"
+	"github.com/jizambrana5/quickfix-back/pkg/domain/user"
 	"github.com/jizambrana5/quickfix-back/pkg/repository/database"
-	database2 "github.com/jizambrana5/quickfix-back/pkg/repository/database/order"
+	orderRepo "github.com/jizambrana5/quickfix-back/pkg/repository/database/order"
+	userRepo "github.com/jizambrana5/quickfix-back/pkg/repository/database/user"
 	"github.com/jizambrana5/quickfix-back/pkg/rest"
+	"github.com/jizambrana5/quickfix-back/pkg/utils"
 )
 
 func main() {
-
+	// Ruta relativa al archivo JSON de ubicaciones en Mendoza
+	locations, err := utils.LoadLocations()
+	if err != nil {
+		fmt.Println("error al cargar las locaciones", err.Error())
+	}
+	fmt.Println(locations)
 	// Inicializar la conexión a la base de datos
-	//database.InitDatabase()
-
 	dbHost := os.Getenv("DB_HOST")
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
@@ -33,12 +39,16 @@ func main() {
 		DBPort:     dbPort,
 	})
 
-	orderRepo := database2.NewOrderRepository(db)
+	orderRepo := orderRepo.NewOrderRepository(db)
 	orderSrv := order.NewService(orderRepo)
-	handler := rest.NewHandler(orderSrv)
+
+	userRepo := userRepo.NewUserRepository(db)
+	userSrv := user.NewUserService(userRepo)
+
+	handler := rest.NewHandler(orderSrv, userSrv)
 
 	server := rest.Routes(handler)
-	err := server.Run(fmt.Sprintf("%s%s", ":", "8080"))
+	err = server.Run(fmt.Sprintf("%s%s", ":", "8080"))
 	if err != nil {
 		panic(err)
 	}

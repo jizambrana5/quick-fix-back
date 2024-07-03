@@ -15,6 +15,9 @@ COPY . .
 
 COPY .env /app/pkg
 
+# Copy the mendoza_locations.json file into the container
+COPY ./pkg/utils/mendoza_locations.json /app/pkg/utils/mendoza_locations.json
+
 # Navigate to the directory containing the main file
 WORKDIR /app/pkg
 
