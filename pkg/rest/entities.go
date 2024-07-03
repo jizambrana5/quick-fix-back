@@ -1,10 +1,13 @@
 package rest
 
 import (
+	errors2 "errors"
+	"strings"
 	"time"
 
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
+	"github.com/jizambrana5/quickfix-back/pkg/utils"
 )
 
 const (
@@ -98,23 +101,22 @@ func (rp RegisterProfessionalRequest) Validate() error {
 	}
 
 	// Cargar ubicaciones válidas
-	/*
-		locations, err := utils.LoadLocations("pkg/utils/mendoza_locations.json")
-		if err != nil {
-			return errors2.New("failed to load locations")
-		}
+	locations, err := utils.LoadLocations()
+	if err != nil {
+		return errors2.New("failed to load locations")
+	}
 
-		// Validación de la ubicación
-		err = utils.ValidateLocation(rp.Location.Department, rp.Location.District, locations)
-		if err != nil {
-			return err
-		}
+	// Validación de la ubicación
+	err = utils.ValidateLocation(rp.Location.Department, rp.Location.District, locations)
+	if err != nil {
+		return errors.ErrInvalidLocation
+	}
 
-		switch strings.ToUpper(rp.Profession) {
-		case string(domain.Plomero), string(domain.Gasista), string(domain.Electricista):
-			return nil
-		default:
-			return errors.ErrInvalidProfession
-		}*/
+	switch strings.ToUpper(rp.Profession) {
+	case string(domain.Plomero), string(domain.Gasista), string(domain.Electricista):
+		return nil
+	default:
+		return errors.ErrInvalidProfession
+	}
 	return nil
 }

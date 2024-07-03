@@ -38,7 +38,7 @@ type (
 		ID        uint64    `json:"id"`
 		Username  string    `json:"username"`
 		Email     string    `json:"email"`
-		Password  string    `json:"password"`
+		Password  string    `json:"-"`
 		Role      string    `json:"role"`
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
@@ -48,7 +48,7 @@ type (
 		ID          uint64    `json:"id"`
 		Username    string    `json:"username"`
 		Email       string    `json:"email"`
-		Password    string    `json:"password"`
+		Password    string    `json:"-"`
 		Role        string    `json:"role"`
 		Profession  string    `json:"profession"`
 		Description string    `json:"description"`

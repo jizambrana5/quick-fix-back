@@ -2,8 +2,8 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
-	"os"
+	"io/ioutil"
+	"path/filepath"
 
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
 )
@@ -13,24 +13,24 @@ type Locations struct {
 }
 
 func LoadLocations() (Locations, error) {
-	// Construct the absolute path to mendoza_locations.json
-	// Adjust this path as needed based on your project structure
+	var loc Locations
 
-	// Open the JSON file
-	file, err := os.Open("./pkg/utils/mendoza_locations.json")
-	if err != nil {
-		return Locations{}, fmt.Errorf("error opening JSON file: %w", err)
-	}
-	defer file.Close()
+	// Obtener la ruta absoluta del archivo mendoza_locations.json dentro del contenedor
+	filePath := filepath.Join("utils", "mendoza_locations.json")
 
-	// Decode JSON into Locations struct
-	var locations Locations
-	err = json.NewDecoder(file).Decode(&locations)
+	// Leer el archivo JSON
+	file, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		return Locations{}, fmt.Errorf("error decoding JSON file: %w", err)
+		return loc, err
 	}
 
-	return locations, nil
+	// Decodificar el archivo JSON en la estructura Locations
+	err = json.Unmarshal(file, &loc)
+	if err != nil {
+		return loc, err
+	}
+
+	return loc, nil
 }
 
 func ValidateLocation(department, district string, locations Locations) error {

@@ -33,7 +33,7 @@ func (s Service) GetOrdersByUser(ctx context.Context, userID uint64) ([]domain.O
 }
 
 func (s Service) GetOrdersByProfessional(ctx context.Context, professionalID uint64) ([]domain.Order, error) {
-	orders, err := s.storage.FindOrdersByUserID(ctx, professionalID)
+	orders, err := s.storage.FindOrdersByProfessionalID(ctx, professionalID)
 	if err != nil {
 		return nil, errors.OrdersGet
 	}
