@@ -7,8 +7,8 @@ import (
 	"github.com/gofrs/uuid"
 
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
+	"github.com/jizambrana5/quickfix-back/pkg/entities"
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
-	"github.com/jizambrana5/quickfix-back/pkg/rest"
 )
 
 const layout = "2006-01-02 15:04"
@@ -40,7 +40,7 @@ func (s Service) GetOrdersByProfessional(ctx context.Context, professionalID uin
 	return orders, nil
 }
 
-func (s Service) CreateOrder(ctx context.Context, orderReq rest.CreateOrderRequest) (domain.Order, error) {
+func (s Service) CreateOrder(ctx context.Context, orderReq entities.CreateOrderRequest) (domain.Order, error) {
 	// Check if exist in that schedule to
 	parsedTime, err := time.Parse(layout, orderReq.ScheduleTo)
 	if err != nil {
@@ -90,7 +90,7 @@ func (s Service) AcceptOrder(ctx context.Context, orderID string) (domain.Order,
 		return domain.Order{}, errors.OrderNotFound
 	}
 
-	if err = order.Validate(); err != nil {
+	if err = order.ValidateToStatus(domain.OrderStatusAccepted); err != nil {
 		return domain.Order{}, err
 	}
 
@@ -114,7 +114,7 @@ func (s Service) CompleteOrder(ctx context.Context, orderID string) (domain.Orde
 		return domain.Order{}, errors.OrderNotFound
 	}
 
-	if err = order.Validate(); err != nil {
+	if err = order.ValidateToStatus(domain.OrderStatusCompleted); err != nil {
 		return domain.Order{}, err
 	}
 
@@ -138,7 +138,7 @@ func (s Service) CancelOrder(ctx context.Context, orderID string) (domain.Order,
 		return domain.Order{}, errors.OrderNotFound
 	}
 
-	if err = order.Validate(); err != nil {
+	if err = order.ValidateToStatus(domain.OrderStatusCancelled); err != nil {
 		return domain.Order{}, err
 	}
 

@@ -1,3 +1,4 @@
+//go:generate moq -pkg mocks -out ./mocks/user_mocks.go -skip-ensure . Storage
 package user
 
 import (

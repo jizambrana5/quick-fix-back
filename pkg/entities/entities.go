@@ -1,4 +1,4 @@
-package rest
+package entities
 
 import (
 	errors2 "errors"
@@ -118,5 +118,4 @@ func (rp RegisterProfessionalRequest) Validate() error {
 	default:
 		return errors.ErrInvalidProfession
 	}
-	return nil
 }

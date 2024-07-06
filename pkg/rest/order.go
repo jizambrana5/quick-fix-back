@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/jizambrana5/quickfix-back/pkg/entities"
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
 )
 
@@ -54,7 +55,7 @@ func (h *Handler) GetOrderByProfessional(c *gin.Context) {
 
 // CreateOrder maneja la solicitud POST /orders
 func (h *Handler) CreateOrder(c *gin.Context) {
-	var orderReq CreateOrderRequest
+	var orderReq entities.CreateOrderRequest
 	if err := c.ShouldBindJSON(&orderReq); err != nil {
 		handleError(c, errors.ErrInvalidCreateOrder)
 		return

@@ -1,3 +1,4 @@
+//go:generate moq -pkg mocks -out ./mocks/order_mocks.go -skip-ensure . Storage
 package order
 
 import (
