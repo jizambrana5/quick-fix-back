@@ -1,0 +1,510 @@
+openapi: 3.0.3
+info:
+  title: QuickFix Backend
+  description: |
+    This API provides the available endpoints for the QuickFix Backend.
+  version: 0.0.0
+
+# SERVERS define base paths for the API
+servers:
+  - url: 'https://{scope}.quickfix-backend.com/'
+    description: Base path for endpoints depending on the scope
+
+# TAGS allow to group related endpoints
+tags:
+  - name: "Users & Professionals"
+    description: "Operations about users and professionals"
+  - name: "Order"
+    description: "Operations about orders"
+
+# COMPONENTS allow definition reuse for parameters, requestBodies, examples, etc
+components:
+  parameters:
+    userIdParam:
+      in: path
+      name: userID
+      description: User ID
+      required: true
+      schema:
+        type: integer
+        format: unint64
+        example: 17829
+    professionalIdParam:
+      in: path
+      name: professionalID
+      description: Professional ID
+      required: true
+      schema:
+        type: integer
+        format: unint64
+        example: 17829
+    orderIdParam:
+      in: path
+      name: orderID
+      description: Order ID
+      required: true
+      schema:
+        type: integer
+        format: string
+        example: aaaa-bbbb-cccc-dddd
+  schemas:
+    CreateOrderRequest:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        professional_id:
+          type: integer
+          format: int64
+          example: 2
+        schedule_to:
+          type: string
+          format: date-time
+          example: "2024-07-10 15:04"
+      required:
+        - user_id
+        - professional_id
+        - schedule_to
+
+    AdvanceOrderRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - pending
+            - accepted
+            - completed
+            - cancelled
+          example: "pending"
+      required:
+        - status
+
+    RegisterUserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "user123"
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        password:
+          type: string
+          format: password
+          example: "password123"
+      required:
+        - username
+        - email
+        - password
+
+    RegisterProfessionalRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "professional123"
+        email:
+          type: string
+          format: email
+          example: "professional@example.com"
+        password:
+          type: string
+          format: password
+          example: "password123"
+        profession:
+          type: string
+          example: "Plomero"
+        description:
+          type: string
+          example: "Experienced plumber"
+        location:
+          $ref: '#/components/schemas/Location'
+      required:
+        - username
+        - email
+        - password
+        - profession
+        - location
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "order_12345"
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        professional_id:
+          type: integer
+          format: int64
+          example: 2
+        status:
+          $ref: '#/components/schemas/Status'
+        dates:
+          $ref: '#/components/schemas/Dates'
+      required:
+        - id
+        - user_id
+        - professional_id
+        - status
+        - dates
+
+    Dates:
+      type: object
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-07-06T12:34:56Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-07-06T12:34:56Z"
+        schedule_to:
+          type: string
+          format: date-time
+          example: "2024-07-10T15:04:00Z"
+      required:
+        - created_at
+        - updated_at
+        - schedule_to
+
+    Status:
+      type: string
+      enum:
+        - pending
+        - accepted
+        - completed
+        - cancelled
+        - created
+      example: "pending"
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        username:
+          type: string
+          example: "user123"
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        role:
+          type: string
+          example: "user"
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-07-06T12:34:56Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-07-06T12:34:56Z"
+      required:
+        - id
+        - username
+        - email
+        - role
+        - created_at
+        - updated_at
+
+    Professional:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 2
+        username:
+          type: string
+          example: "professional123"
+        email:
+          type: string
+          format: email
+          example: "professional@example.com"
+        role:
+          type: string
+          example: "professional"
+        profession:
+          $ref: '#/components/schemas/Profession'
+        description:
+          type: string
+          example: "Experienced plumber"
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-07-06T12:34:56Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-07-06T12:34:56Z"
+        location:
+          $ref: '#/components/schemas/Location'
+      required:
+        - id
+        - username
+        - email
+        - role
+        - profession
+        - description
+        - created_at
+        - updated_at
+        - location
+
+    Profession:
+      type: string
+      enum:
+        - PLOMERO
+        - GASISTA
+        - ELECTRICISTA
+      example: "PLOMERO"
+
+    Location:
+      type: object
+      properties:
+        department:
+          type: string
+          example: "Godoy Cruz"
+        district:
+          type: string
+          example: "Centro"
+      required:
+        - department
+        - district
+
+# PATHS define every endpoint
+paths:
+  ## User & Professionals
+  '/user/{userID}':
+    get:
+      tags:
+        - Users & Professionals
+      summary: Get user information.
+      parameters:
+        - $ref: '#/components/parameters/userIdParam'
+      responses:
+        '200':
+          description: User data
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/User'
+        '500':
+          description: Internal server error.
+  '/user/':
+    post:
+      tags:
+        - Users & Professionals
+      summary: Create a new final user
+      requestBody:
+        description: User data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+      responses:
+        '200':
+          description: User data
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request.
+        '500':
+          description: Internal server error.
+  '/professional/{professionalID}':
+    get:
+      tags:
+        - Users & Professionals
+      summary: Get professional information.
+      parameters:
+        - $ref: '#/components/parameters/professionalIdParam'
+      responses:
+        '200':
+          description: Professional data
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Professional'
+        '500':
+          description: Internal server error.
+  '/professional/':
+    post:
+      tags:
+        - Users & Professionals
+      summary: Create a new professional.
+      requestBody:
+        description: Professional data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterProfessionalRequest'
+      responses:
+        '200':
+          description: Professional data
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Professional'
+        '400':
+          description: Bad Request.
+        '500':
+          description: Internal server error.
+
+  ## Orders
+  '/orders/{orderID}':
+    get:
+      tags:
+        - Order
+      summary: Get order information.
+      parameters:
+        - $ref: '#/components/parameters/orderIdParam'
+      responses:
+        '200':
+          description: Order data
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '500':
+          description: Internal server error.
+  '/orders/user/{userID}':
+    get:
+      tags:
+        - Order
+      summary: Get order information by User ID.
+      parameters:
+        - $ref: '#/components/parameters/userIdParam'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '500':
+          description: Internal server error.
+  '/orders/professional/{professionalID}':
+    get:
+      tags:
+        - Order
+      summary: Get order information by Professional ID.
+      parameters:
+        - $ref: '#/components/parameters/professionalIdParam'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Professional'
+        '500':
+          description: Internal server error.
+  '/orders/':
+    post:
+      tags:
+        - Order
+      summary: Create a new order.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Order created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad request. Invalid input data.
+        '500':
+          description: Internal server error.
+
+  '/orders/{order_id}/accept':
+      put:
+        tags:
+          - Order
+        summary: Accept an order by order ID.
+        parameters:
+          - $ref: '#/components/parameters/orderIdParam'
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvanceOrderRequest'
+        responses:
+          '200':
+            description: Order accepted successfully.
+          '400':
+            description: Bad request. Invalid input data.
+          '404':
+            description: Order not found.
+          '500':
+            description: Internal server error.
+
+  '/orders/{order_id}/complete':
+      put:
+        tags:
+          - Order
+        summary: Complete an order by order ID.
+        parameters:
+          - $ref: '#/components/parameters/orderIdParam'
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvanceOrderRequest'
+        responses:
+          '200':
+            description: Order completed successfully.
+          '400':
+            description: Bad request. Invalid input data.
+          '404':
+            description: Order not found.
+          '500':
+            description: Internal server error.
+
+  '/orders/{order_id}/cancel':
+      put:
+        tags:
+          - Order
+        summary: Cancel an order by order ID.
+        parameters:
+          - $ref: '#/components/parameters/orderIdParam'
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvanceOrderRequest'
+        responses:
+          '200':
+            description: Order canceled successfully.
+          '400':
+            description: Bad request. Invalid input data.
+          '404':
+            description: Order not found.
+          '500':
+            description: Internal server error.
