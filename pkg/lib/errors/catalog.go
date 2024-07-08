@@ -63,4 +63,5 @@ var (
 	ErrInvalidDepartment          = AppError{Err: fmt.Errorf("invalid department"), httpCode: http.StatusBadRequest, internalCode: "invalid_department"}
 	ErrInvalidDistrict            = AppError{Err: fmt.Errorf("invalid district"), httpCode: http.StatusBadRequest, internalCode: "invalid_district"}
 	OrderAlreadyInRequestedStatus = AppError{Err: fmt.Errorf("order already in requested status"), httpCode: http.StatusInternalServerError, internalCode: "order_already_in_requested_status"}
+	ErrInvalidEmail               = AppError{Err: fmt.Errorf("invalid email"), httpCode: http.StatusBadRequest, internalCode: "invalid_email"}
 )

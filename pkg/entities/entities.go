@@ -2,6 +2,7 @@ package entities
 
 import (
 	errors2 "errors"
+	"regexp"
 	"strings"
 	"time"
 
@@ -118,4 +119,19 @@ func (rp RegisterProfessionalRequest) Validate() error {
 	default:
 		return errors.ErrInvalidProfession
 	}
+}
+
+// IsValidEmail validates if a string is a valid email format.
+func IsValidEmail(email string) error {
+	if len(email) == 0 {
+		return errors.EmptyEmail
+	}
+
+	// Regex to validate email format
+	regex := `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`
+	if matched, _ := regexp.MatchString(regex, email); !matched {
+		return errors.ErrInvalidEmail
+	}
+
+	return nil
 }
