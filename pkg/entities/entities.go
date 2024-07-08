@@ -84,6 +84,10 @@ func (r RegisterUserRequest) Validate() error {
 	if r.Email == "" {
 		return errors.EmptyEmail
 	}
+
+	if err := IsValidEmail(r.Email); err != nil {
+		return err
+	}
 	if r.Password == "" {
 		return errors.EmptyPassword
 	}
@@ -97,6 +101,11 @@ func (rp RegisterProfessionalRequest) Validate() error {
 	if rp.Email == "" {
 		return errors.EmptyEmail
 	}
+
+	if err := IsValidEmail(rp.Email); err != nil {
+		return err
+	}
+
 	if rp.Password == "" {
 		return errors.EmptyPassword
 	}
@@ -123,10 +132,6 @@ func (rp RegisterProfessionalRequest) Validate() error {
 
 // IsValidEmail validates if a string is a valid email format.
 func IsValidEmail(email string) error {
-	if len(email) == 0 {
-		return errors.EmptyEmail
-	}
-
 	// Regex to validate email format
 	regex := `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`
 	if matched, _ := regexp.MatchString(regex, email); !matched {
