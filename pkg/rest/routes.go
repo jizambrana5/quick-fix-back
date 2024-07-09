@@ -14,7 +14,7 @@ func Routes(h *Handler) *gin.Engine {
 	r.GET("/orders/:order_id", h.GetOrder)
 	r.GET("/orders/user/:user_id", h.GetOrdersByUser)
 	r.GET("/orders/professional/:professional_id", h.GetOrderByProfessional)
-	r.GET("/orders/professional/:professional_id/:schedule_to_date", h.GetOrdersByProfessionalAndDay)
+	r.GET("/orders/professional/:professional_id/day/:day", h.GetOrdersByProfessionalAndDay)
 
 	r.POST("/orders/", h.CreateOrder)
 	r.PUT("/orders/:order_id/accept", h.AcceptOrder)

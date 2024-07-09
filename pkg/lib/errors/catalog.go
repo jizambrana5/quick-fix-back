@@ -43,6 +43,7 @@ var (
 	ErrCreateProfessional         = AppError{Err: fmt.Errorf("error creating professional"), httpCode: http.StatusInternalServerError, internalCode: "error_creating_professional"}
 	UserGet                       = AppError{Err: fmt.Errorf("error getting user"), httpCode: http.StatusInternalServerError, internalCode: "error_getting_user"}
 	UserNotFound                  = AppError{Err: fmt.Errorf("user not found"), httpCode: http.StatusNotFound, internalCode: "user_not_found"}
+	ProfessionalNotFound          = AppError{Err: fmt.Errorf("professional not found"), httpCode: http.StatusNotFound, internalCode: "professional_not_found"}
 	UserAlreadyExists             = AppError{Err: fmt.Errorf("error user already exist"), httpCode: http.StatusInternalServerError, internalCode: "error_user_already_exist"}
 	ErrInvalidRegisterUser        = AppError{Err: fmt.Errorf("invalid register user"), httpCode: http.StatusInternalServerError, internalCode: "invalid_register_user"}
 	ErrCreateUser                 = AppError{Err: fmt.Errorf("error creating user"), httpCode: http.StatusInternalServerError, internalCode: "error_creating_user"}

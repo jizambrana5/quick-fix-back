@@ -91,6 +91,9 @@ func (s *Service) GetUser(ctx context.Context, ID uint64) (domain.User, error) {
 	if err != nil {
 		return domain.User{}, err
 	}
+	if user.IsEmpty() {
+		return domain.User{}, errors.UserNotFound
+	}
 	return user, nil
 }
 
@@ -98,6 +101,9 @@ func (s *Service) GetProfessional(ctx context.Context, ID uint64) (domain.Profes
 	professional, err := s.storage.GetProfessionalByID(ctx, ID)
 	if err != nil {
 		return domain.Professional{}, err
+	}
+	if professional.IsEmpty() {
+		return domain.Professional{}, errors.ProfessionalNotFound
 	}
 	return professional, nil
 }
