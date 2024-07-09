@@ -3,9 +3,12 @@ package rest
 import (
 	"context"
 	"net/http"
+	"sort"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/jizambrana5/quickfix-back/pkg/domain"
+	"github.com/jizambrana5/quickfix-back/pkg/entities"
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
 )
 
@@ -38,13 +41,28 @@ func (h *Handler) GetOrdersByUser(c *gin.Context) {
 
 // GetOrderByProfessional maneja la solicitud GET /orders/user/:user_id
 func (h *Handler) GetOrderByProfessional(c *gin.Context) {
+	var (
+		orders []domain.Order
+		err    error
+	)
+
 	professionalID, err := ParseProfessionalIDFromRequest(c)
 	if err != nil {
 		handleError(c, err)
 		return
 	}
 
-	orders, err := h.orderService.GetOrdersByProfessional(context.Background(), professionalID)
+	scheduleTo, err := ParseScheduleToFromRequest(c)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	if scheduleTo.IsZero() {
+		orders, err = h.orderService.GetOrdersByProfessional(context.Background(), professionalID)
+	} else {
+		orders, err = h.orderService.GetOrdersByProfessionalAndScheduleTo(context.Background(), professionalID, scheduleTo)
+	}
 	if err != nil {
 		handleError(c, err)
 		return
@@ -52,9 +70,60 @@ func (h *Handler) GetOrderByProfessional(c *gin.Context) {
 	c.JSON(http.StatusOK, orders)
 }
 
+// GetOrderByProfessionalByScheduleTo maneja la solicitud GET /orders/professional/:professional_id/:schedule_to
+func (h *Handler) GetOrderByProfessionalByScheduleTo(c *gin.Context) {
+	professionalID, err := ParseProfessionalIDFromRequest(c)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	scheduleTo, err := ParseScheduleToFromRequest(c)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	orders, err := h.orderService.GetOrdersByProfessionalAndScheduleTo(context.Background(), professionalID, scheduleTo)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, orders)
+}
+
+func (h *Handler) GetOrdersByProfessionalAndDay(c *gin.Context) {
+	professionalID, err := ParseProfessionalIDFromRequest(c)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	parsedDay, err := ParseDayScheduleToFromRequest(c)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	// Llamar al servicio para obtener las órdenes por professional ID y día
+	orders, err := h.orderService.GetOrdersByProfessionalAndDay(c.Request.Context(), professionalID, parsedDay)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	// Ordenar las órdenes por fecha de schedule to de menor a mayor
+	sort.Slice(orders, func(i, j int) bool {
+		return orders[i].Dates.ScheduleTo.Before(orders[j].Dates.ScheduleTo)
+	})
+
+	// Devolver las órdenes como respuesta JSON
+	c.JSON(http.StatusOK, orders)
+}
+
 // CreateOrder maneja la solicitud POST /orders
 func (h *Handler) CreateOrder(c *gin.Context) {
-	var orderReq CreateOrderRequest
+	var orderReq entities.CreateOrderRequest
 	if err := c.ShouldBindJSON(&orderReq); err != nil {
 		handleError(c, errors.ErrInvalidCreateOrder)
 		return

@@ -78,7 +78,11 @@ func (o Order) IsEmpty() bool {
 	return o == Order{}
 }
 
-func (o Order) Validate() error {
+func (o Order) ValidateToStatus(status Status) error {
+	if o.Status == status {
+		return errors.OrderAlreadyInRequestedStatus
+	}
+
 	if o.Status == OrderStatusCompleted {
 		return errors.OrderCompleted
 	}

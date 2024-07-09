@@ -6,11 +6,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
+	"github.com/jizambrana5/quickfix-back/pkg/entities"
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
-	"github.com/jizambrana5/quickfix-back/pkg/rest"
 )
 
-func (s *Service) RegisterUser(ctx context.Context, userReq rest.RegisterUserRequest) (domain.User, error) {
+func (s *Service) RegisterUser(ctx context.Context, userReq entities.RegisterUserRequest) (domain.User, error) {
 	userRepo, err := s.storage.GetUserByUsername(ctx, userReq.Username)
 	if err != nil {
 		return domain.User{}, errors.UserGet
@@ -46,15 +46,11 @@ func (s *Service) RegisterUser(ctx context.Context, userReq rest.RegisterUserReq
 	return createdUser, nil
 }
 
-func (s *Service) RegisterProfessional(ctx context.Context, professionalReq rest.RegisterProfessionalRequest) (domain.Professional, error) {
+func (s *Service) RegisterProfessional(ctx context.Context, professionalReq entities.RegisterProfessionalRequest) (domain.Professional, error) {
 	profRepo, err := s.storage.GetProfessionalByUsername(ctx, professionalReq.Username)
 	if err != nil {
 		return domain.Professional{}, errors.ProfessionalGet
 	}
-	if profRepo.Username == professionalReq.Username {
-		return domain.Professional{}, errors.ProfessionalAlreadyExist
-	}
-
 	if !profRepo.IsEmpty() {
 		return domain.Professional{}, errors.ProfessionalAlreadyExist
 	}
@@ -95,6 +91,9 @@ func (s *Service) GetUser(ctx context.Context, ID uint64) (domain.User, error) {
 	if err != nil {
 		return domain.User{}, err
 	}
+	if user.IsEmpty() {
+		return domain.User{}, errors.UserNotFound
+	}
 	return user, nil
 }
 
@@ -102,6 +101,9 @@ func (s *Service) GetProfessional(ctx context.Context, ID uint64) (domain.Profes
 	professional, err := s.storage.GetProfessionalByID(ctx, ID)
 	if err != nil {
 		return domain.Professional{}, err
+	}
+	if professional.IsEmpty() {
+		return domain.Professional{}, errors.ProfessionalNotFound
 	}
 	return professional, nil
 }

@@ -2,7 +2,7 @@ package utils
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
@@ -18,14 +18,15 @@ func LoadLocations() (Locations, error) {
 	// Obtener la ruta absoluta del archivo mendoza_locations.json dentro del contenedor
 	filePath := filepath.Join("utils", "mendoza_locations.json")
 
-	// Leer el archivo JSON
-	file, err := ioutil.ReadFile(filePath)
+	// Abrir el archivo JSON
+	file, err := os.Open(filePath)
 	if err != nil {
 		return loc, err
 	}
+	defer file.Close()
 
 	// Decodificar el archivo JSON en la estructura Locations
-	err = json.Unmarshal(file, &loc)
+	err = json.NewDecoder(file).Decode(&loc)
 	if err != nil {
 		return loc, err
 	}

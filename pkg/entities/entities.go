@@ -1,7 +1,8 @@
-package rest
+package entities
 
 import (
 	errors2 "errors"
+	"regexp"
 	"strings"
 	"time"
 
@@ -11,7 +12,7 @@ import (
 )
 
 const (
-	layout = "2006-01-02 15:04"
+	Layout = "2006-01-02 15:04"
 )
 
 type (
@@ -29,6 +30,10 @@ type (
 		Username string `json:"username"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
+		Name     string `json:"name"`
+		LastName string `json:"last_name"`
+		Phone    string `json:"phone"`
+		Address  string `json:"address"`
 	}
 
 	RegisterProfessionalRequest struct {
@@ -38,6 +43,10 @@ type (
 		Profession  string   `json:"profession"`
 		Description string   `json:"description"`
 		Location    Location `json:"location"`
+		Name        string   `json:"name"`
+		LastName    string   `json:"last_name"`
+		Phone       string   `json:"phone"`
+		Address     string   `json:"address"`
 	}
 	Location struct {
 		Department string `json:"department"`
@@ -63,7 +72,7 @@ func (co CreateOrderRequest) Validate() error {
 	if co.ScheduleTo == "" {
 		return errors.ErrInvalidScheduleTo
 	}
-	parsedTime, err := time.Parse(layout, co.ScheduleTo)
+	parsedTime, err := time.Parse(Layout, co.ScheduleTo)
 	if err != nil {
 		return errors.ErrInvalidScheduleTo
 	}
@@ -80,8 +89,20 @@ func (r RegisterUserRequest) Validate() error {
 	if r.Username == "" {
 		return errors.EmptyUserName
 	}
-	if r.Email == "" {
-		return errors.EmptyEmail
+	if r.Name == "" {
+		return errors.EmptyName
+	}
+	if r.LastName == "" {
+		return errors.EmptyLastName
+	}
+	if r.Phone == "" {
+		return errors.EmptyPhone
+	}
+	if r.Address == "" {
+		return errors.EmptyAddress
+	}
+	if err := IsValidEmail(r.Email); err != nil {
+		return err
 	}
 	if r.Password == "" {
 		return errors.EmptyPassword
@@ -93,9 +114,24 @@ func (rp RegisterProfessionalRequest) Validate() error {
 	if rp.Username == "" {
 		return errors.EmptyUserName
 	}
-	if rp.Email == "" {
-		return errors.EmptyEmail
+
+	if rp.Name == "" {
+		return errors.EmptyName
 	}
+	if rp.LastName == "" {
+		return errors.EmptyLastName
+	}
+	if rp.Phone == "" {
+		return errors.EmptyPhone
+	}
+	if rp.Address == "" {
+		return errors.EmptyAddress
+	}
+
+	if err := IsValidEmail(rp.Email); err != nil {
+		return err
+	}
+
 	if rp.Password == "" {
 		return errors.EmptyPassword
 	}
@@ -118,5 +154,18 @@ func (rp RegisterProfessionalRequest) Validate() error {
 	default:
 		return errors.ErrInvalidProfession
 	}
+}
+
+// IsValidEmail validates if a string is a valid email format.
+func IsValidEmail(email string) error {
+	if email == "" {
+		return errors.EmptyEmail
+	}
+	// Regex to validate email format
+	regex := `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`
+	if matched, _ := regexp.MatchString(regex, email); !matched {
+		return errors.ErrInvalidEmail
+	}
+
 	return nil
 }

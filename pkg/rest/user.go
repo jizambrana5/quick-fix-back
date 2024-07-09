@@ -5,12 +5,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/jizambrana5/quickfix-back/pkg/entities"
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
 )
 
 // CreateUser maneja la creación de usuarios
 func (h *Handler) CreateUser(c *gin.Context) {
-	var user RegisterUserRequest
+	var user entities.RegisterUserRequest
 	if err := c.ShouldBindJSON(&user); err != nil {
 		handleError(c, errors.ErrInvalidCreateOrder)
 		return
@@ -49,7 +50,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 
 // CreateProfessional maneja la creación de profesionales
 func (h *Handler) CreateProfessional(c *gin.Context) {
-	var professional RegisterProfessionalRequest
+	var professional entities.RegisterProfessionalRequest
 	if err := c.ShouldBindJSON(&professional); err != nil {
 		handleError(c, err)
 		return

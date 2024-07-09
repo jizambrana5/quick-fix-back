@@ -1,13 +1,16 @@
+//go:generate moq -pkg mocks -out ./mocks/handler_mocks.go -skip-ensure . UserService OrderService
 package rest
 
 import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
+	"github.com/jizambrana5/quickfix-back/pkg/entities"
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
 	"github.com/jizambrana5/quickfix-back/pkg/utils"
 )
@@ -29,14 +32,16 @@ type (
 		GetOrder(ctx context.Context, ID string) (domain.Order, error)
 		GetOrdersByUser(ctx context.Context, userID uint64) ([]domain.Order, error)
 		GetOrdersByProfessional(ctx context.Context, professionalID uint64) ([]domain.Order, error)
-		CreateOrder(ctx context.Context, order CreateOrderRequest) (domain.Order, error)
+		CreateOrder(ctx context.Context, order entities.CreateOrderRequest) (domain.Order, error)
 		AcceptOrder(ctx context.Context, orderID string) (domain.Order, error)
 		CompleteOrder(ctx context.Context, orderID string) (domain.Order, error)
 		CancelOrder(ctx context.Context, orderID string) (domain.Order, error)
+		GetOrdersByProfessionalAndScheduleTo(background context.Context, professionalID uint64, scheduleTo time.Time) ([]domain.Order, error)
+		GetOrdersByProfessionalAndDay(ctx context.Context, id uint64, day time.Time) ([]domain.Order, error)
 	}
 	UserService interface {
-		RegisterUser(ctx context.Context, userReq RegisterUserRequest) (domain.User, error)
-		RegisterProfessional(ctx context.Context, professionalReq RegisterProfessionalRequest) (domain.Professional, error)
+		RegisterUser(ctx context.Context, userReq entities.RegisterUserRequest) (domain.User, error)
+		RegisterProfessional(ctx context.Context, professionalReq entities.RegisterProfessionalRequest) (domain.Professional, error)
 		GetUser(ctx context.Context, ID uint64) (domain.User, error)
 		GetProfessional(ctx context.Context, ID uint64) (domain.Professional, error)
 		FindProfessionalsByLocation(ctx context.Context, department string, district string) ([]domain.Professional, error)
