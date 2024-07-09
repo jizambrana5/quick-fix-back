@@ -92,3 +92,36 @@ func (r *Repository) FindOrdersBySchedule(ctx context.Context, scheduleTo time.T
 	}
 	return domainOrders, nil
 }
+
+// FindOrdersByProfessionalAndBySchedule finds orders by professional ID and schedule to
+func (r *Repository) FindOrdersByProfessionalAndBySchedule(ctx context.Context, professionalID uint64, scheduleTo time.Time) ([]domain.Order, error) {
+	var orders []OrderRepo
+	result := r.DB.WithContext(ctx).Where("professional_id = ? AND schedule_to = ?", professionalID, scheduleTo).Find(&orders)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	var domainOrders []domain.Order
+	for _, order := range orders {
+		domainOrders = append(domainOrders, order.ToDomain())
+	}
+	return domainOrders, nil
+}
+
+func (r *Repository) FindOrdersByProfessionalAndByDay(ctx context.Context, professionalID uint64, day time.Time) ([]domain.Order, error) {
+	// Hacer la consulta a la base de datos filtrando por professional ID y el día del schedule to si se proporciona
+	db := r.DB.WithContext(ctx).Where("professional_id = ?", professionalID)
+	if !day.IsZero() {
+		db = db.Where("DATE(schedule_to) = ?", day.Format("2006-01-02"))
+	}
+	var orders []OrderRepo
+	if err := db.Order("schedule_to ASC").Find(&orders).Error; err != nil {
+		return nil, err
+	}
+
+	// Transformar a dominio
+	var domainOrders []domain.Order
+	for _, order := range orders {
+		domainOrders = append(domainOrders, order.ToDomain())
+	}
+	return domainOrders, nil
+}

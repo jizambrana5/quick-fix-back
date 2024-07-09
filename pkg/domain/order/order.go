@@ -151,3 +151,19 @@ func (s Service) CancelOrder(ctx context.Context, orderID string) (domain.Order,
 	}
 	return updatedOrder, nil
 }
+
+func (s Service) GetOrdersByProfessionalAndScheduleTo(ctx context.Context, professionalID uint64, scheduleTo time.Time) ([]domain.Order, error) {
+	orders, err := s.storage.FindOrdersByProfessionalAndBySchedule(ctx, professionalID, scheduleTo)
+	if err != nil {
+		return nil, errors.OrdersGet
+	}
+	return orders, nil
+}
+
+func (s Service) GetOrdersByProfessionalAndDay(ctx context.Context, id uint64, day time.Time) ([]domain.Order, error) {
+	orders, err := s.storage.FindOrdersByProfessionalAndByDay(ctx, id, day)
+	if err != nil {
+		return nil, errors.OrdersGet
+	}
+	return orders, nil
+}

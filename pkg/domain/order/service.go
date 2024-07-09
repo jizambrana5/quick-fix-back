@@ -20,7 +20,9 @@ type Storage interface {
 	FindOrdersByUserID(ctx context.Context, userID uint64) ([]domain.Order, error)
 	FindOrdersByProfessionalID(ctx context.Context, professionalID uint64) ([]domain.Order, error)
 	FindOrdersByStatus(ctx context.Context, status string) ([]domain.Order, error)
-	FindOrdersBySchedule(ctx context.Context, scheduleTo time.Time, userID uint64, professionalID uint64) ([]domain.Order, error) // Ajustado
+	FindOrdersBySchedule(ctx context.Context, scheduleTo time.Time, userID uint64, professionalID uint64) ([]domain.Order, error)
+	FindOrdersByProfessionalAndBySchedule(ctx context.Context, professionalID uint64, scheduleTo time.Time) ([]domain.Order, error)
+	FindOrdersByProfessionalAndByDay(ctx context.Context, id uint64, day time.Time) ([]domain.Order, error)
 }
 
 func NewService(storage Storage) *Service {

@@ -49,6 +49,10 @@ var (
 	EmptyUserName                 = AppError{Err: fmt.Errorf("empty user name"), httpCode: http.StatusBadRequest, internalCode: "empty_user_name"}
 	EmptyEmail                    = AppError{Err: fmt.Errorf("empty email"), httpCode: http.StatusBadRequest, internalCode: "empty_email"}
 	EmptyPassword                 = AppError{Err: fmt.Errorf("empty password"), httpCode: http.StatusBadRequest, internalCode: "empty_password"}
+	EmptyName                     = AppError{Err: fmt.Errorf("empty name"), httpCode: http.StatusBadRequest, internalCode: "empty_name"}
+	EmptyLastName                 = AppError{Err: fmt.Errorf("empty last name"), httpCode: http.StatusBadRequest, internalCode: "empty_last_name"}
+	EmptyPhone                    = AppError{Err: fmt.Errorf("empty phone"), httpCode: http.StatusBadRequest, internalCode: "empty_phone"}
+	EmptyAddress                  = AppError{Err: fmt.Errorf("empty address"), httpCode: http.StatusBadRequest, internalCode: "empty_address"}
 	ErrInvalidLocation            = AppError{Err: fmt.Errorf("invalid location"), httpCode: http.StatusBadRequest, internalCode: "invalid_location"}
 	ErrInvalidProfession          = AppError{Err: fmt.Errorf("invalid profession"), httpCode: http.StatusBadRequest, internalCode: "invalid_profession"}
 	ErrInvalidInput               = AppError{Err: fmt.Errorf("invalid input"), httpCode: http.StatusBadRequest, internalCode: "invalid_input"}
@@ -57,6 +61,7 @@ var (
 	ErrInvalidOrderID             = AppError{Err: fmt.Errorf("invalid order id"), httpCode: http.StatusBadRequest, internalCode: "invalid_order_id"}
 	ErrInvalidProfessionalID      = AppError{Err: fmt.Errorf("invalid professional id"), httpCode: http.StatusBadRequest, internalCode: "invalid_professional_id"}
 	ErrInvalidScheduleTo          = AppError{Err: fmt.Errorf("invalid schedule to"), httpCode: http.StatusBadRequest, internalCode: "invalid_schedule_to"}
+	ErrInvalidDay                 = AppError{Err: fmt.Errorf("invalid day"), httpCode: http.StatusBadRequest, internalCode: "invalid_day"}
 	ErrInvalidCreateOrder         = AppError{Err: fmt.Errorf("invalid create order"), httpCode: http.StatusInternalServerError, internalCode: "invalid_create_order"}
 	ErrInvalidAdvanceOrder        = AppError{Err: fmt.Errorf("invalid advance order"), httpCode: http.StatusInternalServerError, internalCode: "invalid_advance_order"}
 	Validators                    = AppError{Err: fmt.Errorf("error building validators"), httpCode: http.StatusInternalServerError, internalCode: "error_building_validators"}

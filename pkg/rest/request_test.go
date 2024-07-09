@@ -39,9 +39,9 @@ func TestParseProfessionalIDFromRequest(t *testing.T) {
 		expectedError error
 	}{
 		{"123", 123, nil},
-		{"0", 0, errors.ErrInvalidUserID},
-		{"abc", 0, errors.ErrInvalidUserID},
-		{"", 0, errors.ErrInvalidUserID},
+		{"0", 0, errors.ErrInvalidProfessionalID},
+		{"abc", 0, errors.ErrInvalidProfessionalID},
+		{"", 0, errors.ErrInvalidProfessionalID},
 	}
 
 	for _, tt := range tests {

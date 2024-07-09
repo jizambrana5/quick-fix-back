@@ -8,6 +8,7 @@ import (
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
 	"github.com/jizambrana5/quickfix-back/pkg/entities"
 	"sync"
+	"time"
 )
 
 // UserServiceMock is a mock implementation of rest.UserService.
@@ -308,6 +309,12 @@ func (mock *UserServiceMock) RegisterUserCalls() []struct {
 //			GetOrdersByProfessionalFunc: func(ctx context.Context, professionalID uint64) ([]domain.Order, error) {
 //				panic("mock out the GetOrdersByProfessional method")
 //			},
+//			GetOrdersByProfessionalAndDayFunc: func(ctx context.Context, id uint64, day time.Time) ([]domain.Order, error) {
+//				panic("mock out the GetOrdersByProfessionalAndDay method")
+//			},
+//			GetOrdersByProfessionalAndScheduleToFunc: func(background context.Context, professionalID uint64, scheduleTo time.Time) ([]domain.Order, error) {
+//				panic("mock out the GetOrdersByProfessionalAndScheduleTo method")
+//			},
 //			GetOrdersByUserFunc: func(ctx context.Context, userID uint64) ([]domain.Order, error) {
 //				panic("mock out the GetOrdersByUser method")
 //			},
@@ -335,6 +342,12 @@ type OrderServiceMock struct {
 
 	// GetOrdersByProfessionalFunc mocks the GetOrdersByProfessional method.
 	GetOrdersByProfessionalFunc func(ctx context.Context, professionalID uint64) ([]domain.Order, error)
+
+	// GetOrdersByProfessionalAndDayFunc mocks the GetOrdersByProfessionalAndDay method.
+	GetOrdersByProfessionalAndDayFunc func(ctx context.Context, id uint64, day time.Time) ([]domain.Order, error)
+
+	// GetOrdersByProfessionalAndScheduleToFunc mocks the GetOrdersByProfessionalAndScheduleTo method.
+	GetOrdersByProfessionalAndScheduleToFunc func(background context.Context, professionalID uint64, scheduleTo time.Time) ([]domain.Order, error)
 
 	// GetOrdersByUserFunc mocks the GetOrdersByUser method.
 	GetOrdersByUserFunc func(ctx context.Context, userID uint64) ([]domain.Order, error)
@@ -383,6 +396,24 @@ type OrderServiceMock struct {
 			// ProfessionalID is the professionalID argument value.
 			ProfessionalID uint64
 		}
+		// GetOrdersByProfessionalAndDay holds details about calls to the GetOrdersByProfessionalAndDay method.
+		GetOrdersByProfessionalAndDay []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// ID is the id argument value.
+			ID uint64
+			// Day is the day argument value.
+			Day time.Time
+		}
+		// GetOrdersByProfessionalAndScheduleTo holds details about calls to the GetOrdersByProfessionalAndScheduleTo method.
+		GetOrdersByProfessionalAndScheduleTo []struct {
+			// Background is the background argument value.
+			Background context.Context
+			// ProfessionalID is the professionalID argument value.
+			ProfessionalID uint64
+			// ScheduleTo is the scheduleTo argument value.
+			ScheduleTo time.Time
+		}
 		// GetOrdersByUser holds details about calls to the GetOrdersByUser method.
 		GetOrdersByUser []struct {
 			// Ctx is the ctx argument value.
@@ -391,13 +422,15 @@ type OrderServiceMock struct {
 			UserID uint64
 		}
 	}
-	lockAcceptOrder             sync.RWMutex
-	lockCancelOrder             sync.RWMutex
-	lockCompleteOrder           sync.RWMutex
-	lockCreateOrder             sync.RWMutex
-	lockGetOrder                sync.RWMutex
-	lockGetOrdersByProfessional sync.RWMutex
-	lockGetOrdersByUser         sync.RWMutex
+	lockAcceptOrder                          sync.RWMutex
+	lockCancelOrder                          sync.RWMutex
+	lockCompleteOrder                        sync.RWMutex
+	lockCreateOrder                          sync.RWMutex
+	lockGetOrder                             sync.RWMutex
+	lockGetOrdersByProfessional              sync.RWMutex
+	lockGetOrdersByProfessionalAndDay        sync.RWMutex
+	lockGetOrdersByProfessionalAndScheduleTo sync.RWMutex
+	lockGetOrdersByUser                      sync.RWMutex
 }
 
 // AcceptOrder calls AcceptOrderFunc.
@@ -613,6 +646,86 @@ func (mock *OrderServiceMock) GetOrdersByProfessionalCalls() []struct {
 	mock.lockGetOrdersByProfessional.RLock()
 	calls = mock.calls.GetOrdersByProfessional
 	mock.lockGetOrdersByProfessional.RUnlock()
+	return calls
+}
+
+// GetOrdersByProfessionalAndDay calls GetOrdersByProfessionalAndDayFunc.
+func (mock *OrderServiceMock) GetOrdersByProfessionalAndDay(ctx context.Context, id uint64, day time.Time) ([]domain.Order, error) {
+	if mock.GetOrdersByProfessionalAndDayFunc == nil {
+		panic("OrderServiceMock.GetOrdersByProfessionalAndDayFunc: method is nil but OrderService.GetOrdersByProfessionalAndDay was just called")
+	}
+	callInfo := struct {
+		Ctx context.Context
+		ID  uint64
+		Day time.Time
+	}{
+		Ctx: ctx,
+		ID:  id,
+		Day: day,
+	}
+	mock.lockGetOrdersByProfessionalAndDay.Lock()
+	mock.calls.GetOrdersByProfessionalAndDay = append(mock.calls.GetOrdersByProfessionalAndDay, callInfo)
+	mock.lockGetOrdersByProfessionalAndDay.Unlock()
+	return mock.GetOrdersByProfessionalAndDayFunc(ctx, id, day)
+}
+
+// GetOrdersByProfessionalAndDayCalls gets all the calls that were made to GetOrdersByProfessionalAndDay.
+// Check the length with:
+//
+//	len(mockedOrderService.GetOrdersByProfessionalAndDayCalls())
+func (mock *OrderServiceMock) GetOrdersByProfessionalAndDayCalls() []struct {
+	Ctx context.Context
+	ID  uint64
+	Day time.Time
+} {
+	var calls []struct {
+		Ctx context.Context
+		ID  uint64
+		Day time.Time
+	}
+	mock.lockGetOrdersByProfessionalAndDay.RLock()
+	calls = mock.calls.GetOrdersByProfessionalAndDay
+	mock.lockGetOrdersByProfessionalAndDay.RUnlock()
+	return calls
+}
+
+// GetOrdersByProfessionalAndScheduleTo calls GetOrdersByProfessionalAndScheduleToFunc.
+func (mock *OrderServiceMock) GetOrdersByProfessionalAndScheduleTo(background context.Context, professionalID uint64, scheduleTo time.Time) ([]domain.Order, error) {
+	if mock.GetOrdersByProfessionalAndScheduleToFunc == nil {
+		panic("OrderServiceMock.GetOrdersByProfessionalAndScheduleToFunc: method is nil but OrderService.GetOrdersByProfessionalAndScheduleTo was just called")
+	}
+	callInfo := struct {
+		Background     context.Context
+		ProfessionalID uint64
+		ScheduleTo     time.Time
+	}{
+		Background:     background,
+		ProfessionalID: professionalID,
+		ScheduleTo:     scheduleTo,
+	}
+	mock.lockGetOrdersByProfessionalAndScheduleTo.Lock()
+	mock.calls.GetOrdersByProfessionalAndScheduleTo = append(mock.calls.GetOrdersByProfessionalAndScheduleTo, callInfo)
+	mock.lockGetOrdersByProfessionalAndScheduleTo.Unlock()
+	return mock.GetOrdersByProfessionalAndScheduleToFunc(background, professionalID, scheduleTo)
+}
+
+// GetOrdersByProfessionalAndScheduleToCalls gets all the calls that were made to GetOrdersByProfessionalAndScheduleTo.
+// Check the length with:
+//
+//	len(mockedOrderService.GetOrdersByProfessionalAndScheduleToCalls())
+func (mock *OrderServiceMock) GetOrdersByProfessionalAndScheduleToCalls() []struct {
+	Background     context.Context
+	ProfessionalID uint64
+	ScheduleTo     time.Time
+} {
+	var calls []struct {
+		Background     context.Context
+		ProfessionalID uint64
+		ScheduleTo     time.Time
+	}
+	mock.lockGetOrdersByProfessionalAndScheduleTo.RLock()
+	calls = mock.calls.GetOrdersByProfessionalAndScheduleTo
+	mock.lockGetOrdersByProfessionalAndScheduleTo.RUnlock()
 	return calls
 }
 

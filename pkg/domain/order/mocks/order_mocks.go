@@ -19,6 +19,12 @@ import (
 //			CreateOrderFunc: func(ctx context.Context, order domain.Order) (domain.Order, error) {
 //				panic("mock out the CreateOrder method")
 //			},
+//			FindOrdersByProfessionalAndByDayFunc: func(ctx context.Context, id uint64, day time.Time) ([]domain.Order, error) {
+//				panic("mock out the FindOrdersByProfessionalAndByDay method")
+//			},
+//			FindOrdersByProfessionalAndByScheduleFunc: func(ctx context.Context, professionalID uint64, scheduleTo time.Time) ([]domain.Order, error) {
+//				panic("mock out the FindOrdersByProfessionalAndBySchedule method")
+//			},
 //			FindOrdersByProfessionalIDFunc: func(ctx context.Context, professionalID uint64) ([]domain.Order, error) {
 //				panic("mock out the FindOrdersByProfessionalID method")
 //			},
@@ -47,6 +53,12 @@ type StorageMock struct {
 	// CreateOrderFunc mocks the CreateOrder method.
 	CreateOrderFunc func(ctx context.Context, order domain.Order) (domain.Order, error)
 
+	// FindOrdersByProfessionalAndByDayFunc mocks the FindOrdersByProfessionalAndByDay method.
+	FindOrdersByProfessionalAndByDayFunc func(ctx context.Context, id uint64, day time.Time) ([]domain.Order, error)
+
+	// FindOrdersByProfessionalAndByScheduleFunc mocks the FindOrdersByProfessionalAndBySchedule method.
+	FindOrdersByProfessionalAndByScheduleFunc func(ctx context.Context, professionalID uint64, scheduleTo time.Time) ([]domain.Order, error)
+
 	// FindOrdersByProfessionalIDFunc mocks the FindOrdersByProfessionalID method.
 	FindOrdersByProfessionalIDFunc func(ctx context.Context, professionalID uint64) ([]domain.Order, error)
 
@@ -73,6 +85,24 @@ type StorageMock struct {
 			Ctx context.Context
 			// Order is the order argument value.
 			Order domain.Order
+		}
+		// FindOrdersByProfessionalAndByDay holds details about calls to the FindOrdersByProfessionalAndByDay method.
+		FindOrdersByProfessionalAndByDay []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// ID is the id argument value.
+			ID uint64
+			// Day is the day argument value.
+			Day time.Time
+		}
+		// FindOrdersByProfessionalAndBySchedule holds details about calls to the FindOrdersByProfessionalAndBySchedule method.
+		FindOrdersByProfessionalAndBySchedule []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// ProfessionalID is the professionalID argument value.
+			ProfessionalID uint64
+			// ScheduleTo is the scheduleTo argument value.
+			ScheduleTo time.Time
 		}
 		// FindOrdersByProfessionalID holds details about calls to the FindOrdersByProfessionalID method.
 		FindOrdersByProfessionalID []struct {
@@ -121,13 +151,15 @@ type StorageMock struct {
 			Order domain.Order
 		}
 	}
-	lockCreateOrder                sync.RWMutex
-	lockFindOrdersByProfessionalID sync.RWMutex
-	lockFindOrdersBySchedule       sync.RWMutex
-	lockFindOrdersByStatus         sync.RWMutex
-	lockFindOrdersByUserID         sync.RWMutex
-	lockGetOrder                   sync.RWMutex
-	lockUpdateOrder                sync.RWMutex
+	lockCreateOrder                           sync.RWMutex
+	lockFindOrdersByProfessionalAndByDay      sync.RWMutex
+	lockFindOrdersByProfessionalAndBySchedule sync.RWMutex
+	lockFindOrdersByProfessionalID            sync.RWMutex
+	lockFindOrdersBySchedule                  sync.RWMutex
+	lockFindOrdersByStatus                    sync.RWMutex
+	lockFindOrdersByUserID                    sync.RWMutex
+	lockGetOrder                              sync.RWMutex
+	lockUpdateOrder                           sync.RWMutex
 }
 
 // CreateOrder calls CreateOrderFunc.
@@ -163,6 +195,86 @@ func (mock *StorageMock) CreateOrderCalls() []struct {
 	mock.lockCreateOrder.RLock()
 	calls = mock.calls.CreateOrder
 	mock.lockCreateOrder.RUnlock()
+	return calls
+}
+
+// FindOrdersByProfessionalAndByDay calls FindOrdersByProfessionalAndByDayFunc.
+func (mock *StorageMock) FindOrdersByProfessionalAndByDay(ctx context.Context, id uint64, day time.Time) ([]domain.Order, error) {
+	if mock.FindOrdersByProfessionalAndByDayFunc == nil {
+		panic("StorageMock.FindOrdersByProfessionalAndByDayFunc: method is nil but Storage.FindOrdersByProfessionalAndByDay was just called")
+	}
+	callInfo := struct {
+		Ctx context.Context
+		ID  uint64
+		Day time.Time
+	}{
+		Ctx: ctx,
+		ID:  id,
+		Day: day,
+	}
+	mock.lockFindOrdersByProfessionalAndByDay.Lock()
+	mock.calls.FindOrdersByProfessionalAndByDay = append(mock.calls.FindOrdersByProfessionalAndByDay, callInfo)
+	mock.lockFindOrdersByProfessionalAndByDay.Unlock()
+	return mock.FindOrdersByProfessionalAndByDayFunc(ctx, id, day)
+}
+
+// FindOrdersByProfessionalAndByDayCalls gets all the calls that were made to FindOrdersByProfessionalAndByDay.
+// Check the length with:
+//
+//	len(mockedStorage.FindOrdersByProfessionalAndByDayCalls())
+func (mock *StorageMock) FindOrdersByProfessionalAndByDayCalls() []struct {
+	Ctx context.Context
+	ID  uint64
+	Day time.Time
+} {
+	var calls []struct {
+		Ctx context.Context
+		ID  uint64
+		Day time.Time
+	}
+	mock.lockFindOrdersByProfessionalAndByDay.RLock()
+	calls = mock.calls.FindOrdersByProfessionalAndByDay
+	mock.lockFindOrdersByProfessionalAndByDay.RUnlock()
+	return calls
+}
+
+// FindOrdersByProfessionalAndBySchedule calls FindOrdersByProfessionalAndByScheduleFunc.
+func (mock *StorageMock) FindOrdersByProfessionalAndBySchedule(ctx context.Context, professionalID uint64, scheduleTo time.Time) ([]domain.Order, error) {
+	if mock.FindOrdersByProfessionalAndByScheduleFunc == nil {
+		panic("StorageMock.FindOrdersByProfessionalAndByScheduleFunc: method is nil but Storage.FindOrdersByProfessionalAndBySchedule was just called")
+	}
+	callInfo := struct {
+		Ctx            context.Context
+		ProfessionalID uint64
+		ScheduleTo     time.Time
+	}{
+		Ctx:            ctx,
+		ProfessionalID: professionalID,
+		ScheduleTo:     scheduleTo,
+	}
+	mock.lockFindOrdersByProfessionalAndBySchedule.Lock()
+	mock.calls.FindOrdersByProfessionalAndBySchedule = append(mock.calls.FindOrdersByProfessionalAndBySchedule, callInfo)
+	mock.lockFindOrdersByProfessionalAndBySchedule.Unlock()
+	return mock.FindOrdersByProfessionalAndByScheduleFunc(ctx, professionalID, scheduleTo)
+}
+
+// FindOrdersByProfessionalAndByScheduleCalls gets all the calls that were made to FindOrdersByProfessionalAndBySchedule.
+// Check the length with:
+//
+//	len(mockedStorage.FindOrdersByProfessionalAndByScheduleCalls())
+func (mock *StorageMock) FindOrdersByProfessionalAndByScheduleCalls() []struct {
+	Ctx            context.Context
+	ProfessionalID uint64
+	ScheduleTo     time.Time
+} {
+	var calls []struct {
+		Ctx            context.Context
+		ProfessionalID uint64
+		ScheduleTo     time.Time
+	}
+	mock.lockFindOrdersByProfessionalAndBySchedule.RLock()
+	calls = mock.calls.FindOrdersByProfessionalAndBySchedule
+	mock.lockFindOrdersByProfessionalAndBySchedule.RUnlock()
 	return calls
 }
 

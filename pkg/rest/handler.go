@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -35,6 +36,8 @@ type (
 		AcceptOrder(ctx context.Context, orderID string) (domain.Order, error)
 		CompleteOrder(ctx context.Context, orderID string) (domain.Order, error)
 		CancelOrder(ctx context.Context, orderID string) (domain.Order, error)
+		GetOrdersByProfessionalAndScheduleTo(background context.Context, professionalID uint64, scheduleTo time.Time) ([]domain.Order, error)
+		GetOrdersByProfessionalAndDay(ctx context.Context, id uint64, day time.Time) ([]domain.Order, error)
 	}
 	UserService interface {
 		RegisterUser(ctx context.Context, userReq entities.RegisterUserRequest) (domain.User, error)

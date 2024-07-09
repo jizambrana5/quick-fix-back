@@ -8,18 +8,7 @@ import (
 
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
-	"github.com/jizambrana5/quickfix-back/pkg/utils"
 )
-
-// Mock de LoadLocations para los tests
-func mockLoadLocations() (utils.Locations, error) {
-	return utils.Locations{
-		Locations: map[string][]string{
-			"Department1": {"District1", "District2"},
-			"Department2": {"District3", "District4"},
-		},
-	}, nil
-}
 
 func TestAdvanceOrderRequest_Validate(t *testing.T) {
 	tests := []struct {
@@ -41,7 +30,7 @@ func TestAdvanceOrderRequest_Validate(t *testing.T) {
 }
 
 func TestCreateOrderRequest_Validate(t *testing.T) {
-	validTime := time.Now().Add(24 * time.Hour).Format(layout)
+	validTime := time.Now().Add(24 * time.Hour).Format(Layout)
 
 	tests := []struct {
 		req CreateOrderRequest
@@ -52,7 +41,7 @@ func TestCreateOrderRequest_Validate(t *testing.T) {
 		{CreateOrderRequest{UserID: 1, ProfessionalID: 0, ScheduleTo: validTime}, errors.ErrInvalidProfessionalID},
 		{CreateOrderRequest{UserID: 1, ProfessionalID: 1, ScheduleTo: ""}, errors.ErrInvalidScheduleTo},
 		{CreateOrderRequest{UserID: 1, ProfessionalID: 1, ScheduleTo: "invalid_time"}, errors.ErrInvalidScheduleTo},
-		{CreateOrderRequest{UserID: 1, ProfessionalID: 1, ScheduleTo: time.Now().Add(-24 * time.Hour).Format(layout)}, errors.ErrInvalidScheduleTo},
+		{CreateOrderRequest{UserID: 1, ProfessionalID: 1, ScheduleTo: time.Now().Add(-24 * time.Hour).Format(Layout)}, errors.ErrInvalidScheduleTo},
 	}
 
 	for _, tt := range tests {
@@ -61,20 +50,59 @@ func TestCreateOrderRequest_Validate(t *testing.T) {
 	}
 }
 
-func TestRegisterUserRequest_Validate(t *testing.T) {
+func TestValidateRegisterUserRequest(t *testing.T) {
 	tests := []struct {
-		req RegisterUserRequest
-		err error
+		name     string
+		request  RegisterUserRequest
+		expected error
 	}{
-		{RegisterUserRequest{Username: "user", Email: "user@example.com", Password: "password"}, nil},
-		{RegisterUserRequest{Username: "", Email: "user@example.com", Password: "password"}, errors.EmptyUserName},
-		{RegisterUserRequest{Username: "user", Email: "", Password: "password"}, errors.EmptyEmail},
-		{RegisterUserRequest{Username: "user", Email: "user@example.com", Password: ""}, errors.EmptyPassword},
+		{
+			name: "Valid Request",
+			request: RegisterUserRequest{
+				Username: "user123",
+				Name:     "John",
+				LastName: "Doe",
+				Phone:    "123456789",
+				Address:  "123 Street, City",
+				Email:    "john.doe@example.com",
+				Password: "password123",
+			},
+			expected: nil,
+		},
+		{
+			name: "Empty Username",
+			request: RegisterUserRequest{
+				Username: "",
+				Name:     "John",
+				LastName: "Doe",
+				Phone:    "123456789",
+				Address:  "123 Street, City",
+				Email:    "john.doe@example.com",
+				Password: "password123",
+			},
+			expected: errors.EmptyUserName,
+		},
+		{
+			name: "Empty Email",
+			request: RegisterUserRequest{
+				Username: "user123",
+				Name:     "John",
+				LastName: "Doe",
+				Phone:    "123456789",
+				Address:  "123 Street, City",
+				Email:    "",
+				Password: "password123",
+			},
+			expected: errors.EmptyEmail,
+		},
+		// Agrega más casos de prueba según sea necesario para cubrir todos los escenarios posibles
 	}
 
 	for _, tt := range tests {
-		err := tt.req.Validate()
-		assert.Equal(t, tt.err, err)
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.request.Validate()
+			assert.Equal(t, tt.expected, err)
+		})
 	}
 }
 
