@@ -58,7 +58,6 @@ func (s Service) CreateOrder(ctx context.Context, orderReq entities.CreateOrderR
 		return domain.Order{}, errors.OrderAlreadyExists
 	}
 
-	now := time.Now()
 	orderID, _ := uuid.NewV4()
 
 	order := domain.Order{
@@ -66,11 +65,16 @@ func (s Service) CreateOrder(ctx context.Context, orderReq entities.CreateOrderR
 		UserID:         orderReq.UserID,
 		ProfessionalID: orderReq.ProfessionalID,
 		Dates: domain.Dates{
-			CreatedAt:  now,
-			UpdatedAt:  now,
+			CreatedAt:  time.Now().In(loc),
+			UpdatedAt:  time.Now().In(loc),
 			ScheduleTo: parsedTime,
 		},
-		Status: domain.OrderStatusPending,
+		Status:  domain.OrderStatusPending,
+		Address: orderReq.Address,
+		Location: domain.Location{
+			Department: orderReq.Location.Department,
+			District:   orderReq.Location.District,
+		},
 	}
 
 	createdOrder, err := s.storage.CreateOrder(ctx, order)
@@ -95,7 +99,8 @@ func (s Service) AcceptOrder(ctx context.Context, orderID string) (domain.Order,
 	}
 
 	order.Status = domain.OrderStatusAccepted
-	order.Dates.UpdatedAt = time.Now()
+	loc, _ := time.LoadLocation("America/Sao_Paulo")
+	order.Dates.UpdatedAt = time.Now().In(loc)
 
 	updatedOrder, err := s.storage.UpdateOrder(ctx, order)
 	if err != nil {
@@ -119,7 +124,8 @@ func (s Service) CompleteOrder(ctx context.Context, orderID string) (domain.Orde
 	}
 
 	order.Status = domain.OrderStatusCompleted
-	order.Dates.UpdatedAt = time.Now()
+	loc, _ := time.LoadLocation("America/Sao_Paulo")
+	order.Dates.UpdatedAt = time.Now().In(loc)
 
 	updatedOrder, err := s.storage.UpdateOrder(ctx, order)
 	if err != nil {
@@ -143,7 +149,8 @@ func (s Service) CancelOrder(ctx context.Context, orderID string) (domain.Order,
 	}
 
 	order.Status = domain.OrderStatusCancelled
-	order.Dates.UpdatedAt = time.Now()
+	loc, _ := time.LoadLocation("America/Sao_Paulo")
+	order.Dates.UpdatedAt = time.Now().In(loc)
 
 	updatedOrder, err := s.storage.UpdateOrder(ctx, order)
 	if err != nil {

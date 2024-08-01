@@ -20,6 +20,9 @@ import (
 //			FindProfessionalsByLocationFunc: func(ctx context.Context, department string, district string) ([]domain.Professional, error) {
 //				panic("mock out the FindProfessionalsByLocation method")
 //			},
+//			FindProfessionalsByLocationAndProfessionFunc: func(ctx context.Context, department string, district string, profession string) ([]domain.Professional, error) {
+//				panic("mock out the FindProfessionalsByLocationAndProfession method")
+//			},
 //			GetProfessionalFunc: func(ctx context.Context, ID uint64) (domain.Professional, error) {
 //				panic("mock out the GetProfessional method")
 //			},
@@ -41,6 +44,9 @@ import (
 type UserServiceMock struct {
 	// FindProfessionalsByLocationFunc mocks the FindProfessionalsByLocation method.
 	FindProfessionalsByLocationFunc func(ctx context.Context, department string, district string) ([]domain.Professional, error)
+
+	// FindProfessionalsByLocationAndProfessionFunc mocks the FindProfessionalsByLocationAndProfession method.
+	FindProfessionalsByLocationAndProfessionFunc func(ctx context.Context, department string, district string, profession string) ([]domain.Professional, error)
 
 	// GetProfessionalFunc mocks the GetProfessional method.
 	GetProfessionalFunc func(ctx context.Context, ID uint64) (domain.Professional, error)
@@ -64,6 +70,17 @@ type UserServiceMock struct {
 			Department string
 			// District is the district argument value.
 			District string
+		}
+		// FindProfessionalsByLocationAndProfession holds details about calls to the FindProfessionalsByLocationAndProfession method.
+		FindProfessionalsByLocationAndProfession []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// Department is the department argument value.
+			Department string
+			// District is the district argument value.
+			District string
+			// Profession is the profession argument value.
+			Profession string
 		}
 		// GetProfessional holds details about calls to the GetProfessional method.
 		GetProfessional []struct {
@@ -94,11 +111,12 @@ type UserServiceMock struct {
 			UserReq entities.RegisterUserRequest
 		}
 	}
-	lockFindProfessionalsByLocation sync.RWMutex
-	lockGetProfessional             sync.RWMutex
-	lockGetUser                     sync.RWMutex
-	lockRegisterProfessional        sync.RWMutex
-	lockRegisterUser                sync.RWMutex
+	lockFindProfessionalsByLocation              sync.RWMutex
+	lockFindProfessionalsByLocationAndProfession sync.RWMutex
+	lockGetProfessional                          sync.RWMutex
+	lockGetUser                                  sync.RWMutex
+	lockRegisterProfessional                     sync.RWMutex
+	lockRegisterUser                             sync.RWMutex
 }
 
 // FindProfessionalsByLocation calls FindProfessionalsByLocationFunc.
@@ -138,6 +156,50 @@ func (mock *UserServiceMock) FindProfessionalsByLocationCalls() []struct {
 	mock.lockFindProfessionalsByLocation.RLock()
 	calls = mock.calls.FindProfessionalsByLocation
 	mock.lockFindProfessionalsByLocation.RUnlock()
+	return calls
+}
+
+// FindProfessionalsByLocationAndProfession calls FindProfessionalsByLocationAndProfessionFunc.
+func (mock *UserServiceMock) FindProfessionalsByLocationAndProfession(ctx context.Context, department string, district string, profession string) ([]domain.Professional, error) {
+	if mock.FindProfessionalsByLocationAndProfessionFunc == nil {
+		panic("UserServiceMock.FindProfessionalsByLocationAndProfessionFunc: method is nil but UserService.FindProfessionalsByLocationAndProfession was just called")
+	}
+	callInfo := struct {
+		Ctx        context.Context
+		Department string
+		District   string
+		Profession string
+	}{
+		Ctx:        ctx,
+		Department: department,
+		District:   district,
+		Profession: profession,
+	}
+	mock.lockFindProfessionalsByLocationAndProfession.Lock()
+	mock.calls.FindProfessionalsByLocationAndProfession = append(mock.calls.FindProfessionalsByLocationAndProfession, callInfo)
+	mock.lockFindProfessionalsByLocationAndProfession.Unlock()
+	return mock.FindProfessionalsByLocationAndProfessionFunc(ctx, department, district, profession)
+}
+
+// FindProfessionalsByLocationAndProfessionCalls gets all the calls that were made to FindProfessionalsByLocationAndProfession.
+// Check the length with:
+//
+//	len(mockedUserService.FindProfessionalsByLocationAndProfessionCalls())
+func (mock *UserServiceMock) FindProfessionalsByLocationAndProfessionCalls() []struct {
+	Ctx        context.Context
+	Department string
+	District   string
+	Profession string
+} {
+	var calls []struct {
+		Ctx        context.Context
+		Department string
+		District   string
+		Profession string
+	}
+	mock.lockFindProfessionalsByLocationAndProfession.RLock()
+	calls = mock.calls.FindProfessionalsByLocationAndProfession
+	mock.lockFindProfessionalsByLocationAndProfession.RUnlock()
 	return calls
 }
 

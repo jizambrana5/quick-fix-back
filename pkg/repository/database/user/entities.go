@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
-
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -12,6 +12,10 @@ type UserRepo struct {
 	Username  string    `gorm:"type:varchar(100);uniqueIndex;not null"`
 	Email     string    `gorm:"type:varchar(100);uniqueIndex;not null"`
 	Password  string    `gorm:"not null"`
+	Name      string    `gorm:"type:varchar(100);not null"`
+	LastName  string    `gorm:"type:varchar(100);not null"`
+	Address   string    `gorm:"type:varchar(100);not null"`
+	Phone     string    `gorm:"type:varchar(100);not null"`
 	Role      string    `gorm:"type:varchar(50);not null"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
@@ -23,6 +27,10 @@ type ProfessionalRepo struct {
 	Username    string       `gorm:"type:varchar(100);uniqueIndex;not null"`
 	Email       string       `gorm:"type:varchar(100);uniqueIndex;not null"`
 	Password    string       `gorm:"not null"`
+	Name        string       `gorm:"type:varchar(100);not null"`
+	LastName    string       `gorm:"type:varchar(100);not null"`
+	Address     string       `gorm:"type:varchar(100);not null"`
+	Phone       string       `gorm:"type:varchar(100);not null"`
 	Role        string       `gorm:"type:varchar(50);not null"`
 	Profession  string       `gorm:"type:varchar(100);not null"`
 	Description string       `gorm:"type:text"`
@@ -44,6 +52,10 @@ func (u *UserRepo) ToDomain() domain.User {
 		Username:  u.Username,
 		Email:     u.Email,
 		Role:      u.Role,
+		Name:      u.Name,
+		LastName:  u.LastName,
+		Address:   u.Address,
+		Phone:     u.Phone,
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
 	}
@@ -56,6 +68,10 @@ func FromDomainToUser(u domain.User) UserRepo {
 		Username:  u.Username,
 		Email:     u.Email,
 		Password:  u.Password,
+		Name:      u.Name,
+		LastName:  u.LastName,
+		Address:   u.Address,
+		Phone:     u.Phone,
 		Role:      u.Role,
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
@@ -69,8 +85,12 @@ func (p *ProfessionalRepo) ToDomain() domain.Professional {
 		Username:    p.Username,
 		Email:       p.Email,
 		Role:        p.Role,
-		Profession:  p.Profession,
+		Profession:  domain.Profession(p.Profession),
 		Description: p.Description,
+		Name:        p.Name,
+		LastName:    p.LastName,
+		Address:     p.Address,
+		Phone:       p.Phone,
 		CreatedAt:   p.CreatedAt,
 		UpdatedAt:   p.UpdatedAt,
 		Location: domain.Location{
@@ -88,13 +108,57 @@ func FromDomainToProf(p domain.Professional) ProfessionalRepo {
 		Email:       p.Email,
 		Password:    p.Password,
 		Role:        p.Role,
-		Profession:  p.Profession,
+		Profession:  string(p.Profession),
 		Description: p.Description,
 		Location: LocationRepo{
 			Department: p.Location.Department,
 			District:   p.Location.District,
 		},
+		Name:      p.Name,
+		LastName:  p.LastName,
+		Phone:     p.Phone,
+		Address:   p.Address,
 		CreatedAt: p.CreatedAt,
 		UpdatedAt: p.UpdatedAt,
 	}
+}
+
+// BeforeCreate hook de Gorm para convertir CreatedAt a UTC-3 antes de crear el registro
+func (u *UserRepo) BeforeCreate(tx *gorm.DB) (err error) {
+	loc, err := time.LoadLocation("America/Argentina/Buenos_Aires")
+	if err != nil {
+		return err
+	}
+	u.CreatedAt = time.Now().In(loc)
+	return
+}
+
+// BeforeUpdate hook de Gorm para convertir UpdatedAt a UTC-3 antes de actualizar el registro
+func (u *UserRepo) BeforeUpdate(tx *gorm.DB) (err error) {
+	loc, err := time.LoadLocation("America/Argentina/Buenos_Aires")
+	if err != nil {
+		return err
+	}
+	u.UpdatedAt = time.Now().In(loc)
+	return
+}
+
+// BeforeCreate hook de Gorm para convertir CreatedAt a UTC-3 antes de crear el registro
+func (p *ProfessionalRepo) BeforeCreate(tx *gorm.DB) (err error) {
+	loc, err := time.LoadLocation("America/Argentina/Buenos_Aires")
+	if err != nil {
+		return err
+	}
+	p.CreatedAt = time.Now().In(loc)
+	return
+}
+
+// BeforeUpdate hook de Gorm para convertir UpdatedAt a UTC-3 antes de actualizar el registro
+func (p *ProfessionalRepo) BeforeUpdate(tx *gorm.DB) (err error) {
+	loc, err := time.LoadLocation("America/Argentina/Buenos_Aires")
+	if err != nil {
+		return err
+	}
+	p.UpdatedAt = time.Now().In(loc)
+	return
 }

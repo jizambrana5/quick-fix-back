@@ -2,8 +2,10 @@ package utils
 
 import (
 	"encoding/json"
+	"github.com/jizambrana5/quickfix-back/pkg/domain"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
 )
@@ -11,6 +13,8 @@ import (
 type Locations struct {
 	Locations map[string][]string `json:"locations"`
 }
+
+var locations Locations
 
 func LoadLocations() (Locations, error) {
 	var loc Locations
@@ -31,6 +35,7 @@ func LoadLocations() (Locations, error) {
 		return loc, err
 	}
 
+	locations = loc
 	return loc, nil
 }
 
@@ -47,4 +52,20 @@ func ValidateLocation(department, district string, locations Locations) error {
 	}
 
 	return errors.ErrInvalidDistrict
+}
+
+func GetLocations() (Locations, error) {
+	if locations.Locations == nil {
+		return Locations{}, errors.ErrInvalidLocation
+	}
+	return locations, nil
+}
+
+func ValidateProfession(profession string) bool {
+	switch strings.ToUpper(profession) {
+	case string(domain.Plomero), string(domain.Gasista), string(domain.Electricista):
+		return true
+	default:
+		return false
+	}
 }

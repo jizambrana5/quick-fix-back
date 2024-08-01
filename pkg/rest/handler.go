@@ -45,6 +45,7 @@ type (
 		GetUser(ctx context.Context, ID uint64) (domain.User, error)
 		GetProfessional(ctx context.Context, ID uint64) (domain.Professional, error)
 		FindProfessionalsByLocation(ctx context.Context, department string, district string) ([]domain.Professional, error)
+		FindProfessionalsByLocationAndProfession(ctx context.Context, department string, district string, profession string) ([]domain.Professional, error)
 	}
 )
 
@@ -65,7 +66,7 @@ func handleError(c *gin.Context, err error) {
 
 // GetLocations handler para obtener las ubicaciones.
 func (h *Handler) GetLocations(c *gin.Context) {
-	locations, err := utils.LoadLocations()
+	locations, err := utils.GetLocations()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"code": "", "message": err.Error()})
 		return

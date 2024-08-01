@@ -27,5 +27,5 @@ func (t *handlerSuite) Test_GetOrdersByProfessional() {
 	MockRequest(t.ctx, params, queryParams, http.MethodGet)
 	t.handler.GetOrderByProfessional(t.ctx)
 	t.Equal(http.StatusOK, t.w.Code)
-	t.Equal("[{\"id\":\"as\",\"user_id\":0,\"professional_id\":0,\"status\":\"\",\"dates\":{\"created_at\":\"0001-01-01T00:00:00Z\",\"updated_at\":\"0001-01-01T00:00:00Z\",\"schedule_to\":\"0001-01-01T00:00:00Z\"}}]", t.w.Body.String())
+	t.Equal("[{\"id\":\"as\",\"user_id\":0,\"professional_id\":0,\"status\":\"\",\"dates\":{\"created_at\":\"0001-01-01T00:00:00Z\",\"updated_at\":\"0001-01-01T00:00:00Z\",\"schedule_to\":\"0001-01-01T00:00:00Z\"},\"address\":\"\",\"location\":{\"department\":\"\",\"district\":\"\"}}]", t.w.Body.String())
 }
