@@ -23,20 +23,21 @@ type UserRepo struct {
 
 // ProfessionalRepo represents the professional entity in the database
 type ProfessionalRepo struct {
-	ID          uint64       `gorm:"primaryKey;autoIncrement"`
-	Username    string       `gorm:"type:varchar(100);uniqueIndex;not null"`
-	Email       string       `gorm:"type:varchar(100);uniqueIndex;not null"`
-	Password    string       `gorm:"not null"`
-	Name        string       `gorm:"type:varchar(100);not null"`
-	LastName    string       `gorm:"type:varchar(100);not null"`
-	Address     string       `gorm:"type:varchar(100);not null"`
-	Phone       string       `gorm:"type:varchar(100);not null"`
-	Role        string       `gorm:"type:varchar(50);not null"`
-	Profession  string       `gorm:"type:varchar(100);not null"`
-	Description string       `gorm:"type:text"`
-	CreatedAt   time.Time    `gorm:"autoCreateTime"`
-	UpdatedAt   time.Time    `gorm:"autoUpdateTime"`
-	Location    LocationRepo `gorm:"embedded;embeddedPrefix:location_"` // Embedded struct
+	ID                 uint64       `gorm:"primaryKey;autoIncrement"`
+	Username           string       `gorm:"type:varchar(100);uniqueIndex;not null"`
+	Email              string       `gorm:"type:varchar(100);uniqueIndex;not null"`
+	Password           string       `gorm:"not null"`
+	Name               string       `gorm:"type:varchar(100);not null"`
+	LastName           string       `gorm:"type:varchar(100);not null"`
+	Address            string       `gorm:"type:varchar(100);not null"`
+	Phone              string       `gorm:"type:varchar(100);not null"`
+	Role               string       `gorm:"type:varchar(50);not null"`
+	Profession         string       `gorm:"type:varchar(100);not null"`
+	Description        string       `gorm:"type:text"`
+	CreatedAt          time.Time    `gorm:"autoCreateTime"`
+	UpdatedAt          time.Time    `gorm:"autoUpdateTime"`
+	Location           LocationRepo `gorm:"embedded;embeddedPrefix:location_"` // Embedded struct
+	RegistrationNumber string       `gorm:"type:varchar(50);not null"`
 }
 
 // LocationRepo es la entidad del repositorio que representa la ubicación de un profesional.
@@ -97,6 +98,7 @@ func (p *ProfessionalRepo) ToDomain() domain.Professional {
 			Department: p.Location.Department,
 			District:   p.Location.District,
 		},
+		RegistrationNumber: p.RegistrationNumber,
 	}
 }
 
@@ -114,12 +116,13 @@ func FromDomainToProf(p domain.Professional) ProfessionalRepo {
 			Department: p.Location.Department,
 			District:   p.Location.District,
 		},
-		Name:      p.Name,
-		LastName:  p.LastName,
-		Phone:     p.Phone,
-		Address:   p.Address,
-		CreatedAt: p.CreatedAt,
-		UpdatedAt: p.UpdatedAt,
+		Name:               p.Name,
+		LastName:           p.LastName,
+		Phone:              p.Phone,
+		Address:            p.Address,
+		CreatedAt:          p.CreatedAt,
+		UpdatedAt:          p.UpdatedAt,
+		RegistrationNumber: p.RegistrationNumber,
 	}
 }
 

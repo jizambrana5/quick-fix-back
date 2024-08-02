@@ -22,6 +22,7 @@ type (
 		ScheduleTo     string   `json:"schedule_to"`
 		Address        string   `json:"address"`
 		Location       Location `json:"location"`
+		Description    string   `json:"description"`
 	}
 
 	AdvanceOrderRequest struct {
@@ -39,16 +40,17 @@ type (
 	}
 
 	RegisterProfessionalRequest struct {
-		Username    string   `json:"username"`
-		Email       string   `json:"email"`
-		Password    string   `json:"password"`
-		Profession  string   `json:"profession"`
-		Description string   `json:"description"`
-		Location    Location `json:"location"`
-		Name        string   `json:"name"`
-		LastName    string   `json:"last_name"`
-		Phone       string   `json:"phone"`
-		Address     string   `json:"address"`
+		Username           string   `json:"username"`
+		Email              string   `json:"email"`
+		Password           string   `json:"password"`
+		Profession         string   `json:"profession"`
+		Description        string   `json:"description"`
+		Location           Location `json:"location"`
+		Name               string   `json:"name"`
+		LastName           string   `json:"last_name"`
+		Phone              string   `json:"phone"`
+		Address            string   `json:"address"`
+		RegistrationNumber string   `json:"registration_number"`
 	}
 	Location struct {
 		Department string `json:"department"`
@@ -80,6 +82,10 @@ func (co CreateOrderRequest) Validate() error {
 	}
 	if co.Address == "" {
 		return errors.EmptyAddress
+	}
+
+	if co.Description == "" {
+		return errors.EmptyDescription
 	}
 
 	// validate date
@@ -144,6 +150,9 @@ func (rp RegisterProfessionalRequest) Validate() error {
 	}
 	if rp.Address == "" {
 		return errors.EmptyAddress
+	}
+	if rp.RegistrationNumber == "" {
+		return errors.EmptyRegistrationNumber
 	}
 
 	if err := IsValidEmail(rp.Email); err != nil {

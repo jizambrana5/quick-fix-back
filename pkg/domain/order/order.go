@@ -55,7 +55,14 @@ func (s Service) CreateOrder(ctx context.Context, orderReq entities.CreateOrderR
 	}
 
 	if len(orders) > 0 {
-		return domain.Order{}, errors.OrderAlreadyExists
+		for _, order := range orders {
+			if order.Status == domain.OrderStatusAccepted {
+				return domain.Order{}, errors.OrderAlreadyExists
+			}
+			if order.Status == domain.OrderStatusCompleted {
+				return domain.Order{}, errors.OrderCompleted
+			}
+		}
 	}
 
 	orderID, _ := uuid.NewV4()
@@ -75,6 +82,7 @@ func (s Service) CreateOrder(ctx context.Context, orderReq entities.CreateOrderR
 			Department: orderReq.Location.Department,
 			District:   orderReq.Location.District,
 		},
+		Description: orderReq.Description,
 	}
 
 	createdOrder, err := s.storage.CreateOrder(ctx, order)

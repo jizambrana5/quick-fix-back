@@ -21,6 +21,7 @@ type (
 		ScheduleTo     time.Time             `gorm:"autoScheduleTime"`
 		Address        string                `gorm:"size:255;not null"`
 		Location       LocationRepo          `gorm:"embedded;embeddedPrefix:location_"` // Embedded struct
+		Description    string                `gorm:"type:text;not null"`
 	}
 	// LocationRepo es la entidad del repositorio que representa la ubicación de un profesional.
 	LocationRepo struct {
@@ -46,6 +47,7 @@ func (o *OrderRepo) ToDomain() domain.Order {
 			Department: o.Location.Department,
 			District:   o.Location.District,
 		},
+		Description: o.Description,
 	}
 }
 
@@ -64,5 +66,6 @@ func FromDomain(order domain.Order) OrderRepo {
 			Department: order.Location.Department,
 			District:   order.Location.District,
 		},
+		Description: order.Description,
 	}
 }

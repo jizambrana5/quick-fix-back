@@ -54,6 +54,8 @@ var (
 	EmptyLastName                 = AppError{Err: fmt.Errorf("empty last name"), httpCode: http.StatusBadRequest, internalCode: "empty_last_name"}
 	EmptyPhone                    = AppError{Err: fmt.Errorf("empty phone"), httpCode: http.StatusBadRequest, internalCode: "empty_phone"}
 	EmptyAddress                  = AppError{Err: fmt.Errorf("empty address"), httpCode: http.StatusBadRequest, internalCode: "empty_address"}
+	EmptyRegistrationNumber       = AppError{Err: fmt.Errorf("empty registration number"), httpCode: http.StatusBadRequest, internalCode: "empty_registration_number"}
+	EmptyDescription              = AppError{Err: fmt.Errorf("empty description"), httpCode: http.StatusBadRequest, internalCode: "empty_description"}
 	ErrInvalidLocation            = AppError{Err: fmt.Errorf("invalid location"), httpCode: http.StatusBadRequest, internalCode: "invalid_location"}
 	ErrInvalidProfession          = AppError{Err: fmt.Errorf("invalid profession"), httpCode: http.StatusBadRequest, internalCode: "invalid_profession"}
 	ErrInvalidInput               = AppError{Err: fmt.Errorf("invalid input"), httpCode: http.StatusBadRequest, internalCode: "invalid_input"}
