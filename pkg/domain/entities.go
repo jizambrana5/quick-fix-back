@@ -28,6 +28,7 @@ type (
 		Dates          Dates    `json:"dates"`
 		Address        string   `json:"address"`
 		Location       Location `json:"location"`
+		Description    string   `json:"description"`
 	}
 	Dates struct {
 		CreatedAt  time.Time `json:"created_at"`
@@ -51,20 +52,21 @@ type (
 	}
 
 	Professional struct {
-		ID          uint64     `json:"id"`
-		Username    string     `json:"username"`
-		Email       string     `json:"email"`
-		Password    string     `json:"-"`
-		Role        string     `json:"role"`
-		Profession  Profession `json:"profession"`
-		Description string     `json:"description"`
-		CreatedAt   time.Time  `json:"created_at"`
-		UpdatedAt   time.Time  `json:"updated_at"`
-		Location    Location   `json:"location"`
-		Name        string     `json:"name"`
-		LastName    string     `json:"last_name"`
-		Phone       string     `json:"phone"`
-		Address     string     `json:"address"`
+		ID                 uint64     `json:"id"`
+		Username           string     `json:"username"`
+		Email              string     `json:"email"`
+		Password           string     `json:"-"`
+		Role               string     `json:"role"`
+		Profession         Profession `json:"profession"`
+		Description        string     `json:"description"`
+		CreatedAt          time.Time  `json:"created_at"`
+		UpdatedAt          time.Time  `json:"updated_at"`
+		Location           Location   `json:"location"`
+		Name               string     `json:"name"`
+		LastName           string     `json:"last_name"`
+		Phone              string     `json:"phone"`
+		Address            string     `json:"address"`
+		RegistrationNumber string     `json:"registration_number"`
 	}
 	Location struct {
 		Department string `json:"department"`

@@ -89,6 +89,7 @@ func (s *Service) RegisterProfessional(ctx context.Context, professionalReq enti
 	prof.LastName = professionalReq.LastName
 	prof.Phone = professionalReq.Phone
 	prof.Address = professionalReq.Address
+	prof.RegistrationNumber = professionalReq.RegistrationNumber
 	loc, _ := time.LoadLocation("America/Sao_Paulo")
 	prof.CreatedAt = time.Now().In(loc)
 	prof.UpdatedAt = time.Now().In(loc)

@@ -75,6 +75,7 @@ func (s Service) CreateOrder(ctx context.Context, orderReq entities.CreateOrderR
 			Department: orderReq.Location.Department,
 			District:   orderReq.Location.District,
 		},
+		Description: orderReq.Description,
 	}
 
 	createdOrder, err := s.storage.CreateOrder(ctx, order)
