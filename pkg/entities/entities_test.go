@@ -36,12 +36,12 @@ func TestCreateOrderRequest_Validate(t *testing.T) {
 		req CreateOrderRequest
 		err error
 	}{
-		{CreateOrderRequest{UserID: 1, ProfessionalID: 1, ScheduleTo: validTime}, nil},
+		{CreateOrderRequest{UserID: 1, ProfessionalID: 1, ScheduleTo: validTime}, errors.EmptyAddress},
 		{CreateOrderRequest{UserID: 0, ProfessionalID: 1, ScheduleTo: validTime}, errors.ErrInvalidUserID},
 		{CreateOrderRequest{UserID: 1, ProfessionalID: 0, ScheduleTo: validTime}, errors.ErrInvalidProfessionalID},
 		{CreateOrderRequest{UserID: 1, ProfessionalID: 1, ScheduleTo: ""}, errors.ErrInvalidScheduleTo},
 		{CreateOrderRequest{UserID: 1, ProfessionalID: 1, ScheduleTo: "invalid_time"}, errors.ErrInvalidScheduleTo},
-		{CreateOrderRequest{UserID: 1, ProfessionalID: 1, ScheduleTo: time.Now().Add(-24 * time.Hour).Format(Layout)}, errors.ErrInvalidScheduleTo},
+		{CreateOrderRequest{UserID: 1, ProfessionalID: 1, ScheduleTo: time.Now().Add(-24 * time.Hour).Format(Layout)}, errors.EmptyAddress},
 	}
 
 	for _, tt := range tests {

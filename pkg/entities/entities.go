@@ -17,9 +17,12 @@ const (
 
 type (
 	CreateOrderRequest struct {
-		UserID         uint64 `json:"user_id"`
-		ProfessionalID uint64 `json:"professional_id"`
-		ScheduleTo     string `json:"schedule_to"`
+		UserID         uint64   `json:"user_id"`
+		ProfessionalID uint64   `json:"professional_id"`
+		ScheduleTo     string   `json:"schedule_to"`
+		Address        string   `json:"address"`
+		Location       Location `json:"location"`
+		Description    string   `json:"description"`
 	}
 
 	AdvanceOrderRequest struct {
@@ -37,16 +40,17 @@ type (
 	}
 
 	RegisterProfessionalRequest struct {
-		Username    string   `json:"username"`
-		Email       string   `json:"email"`
-		Password    string   `json:"password"`
-		Profession  string   `json:"profession"`
-		Description string   `json:"description"`
-		Location    Location `json:"location"`
-		Name        string   `json:"name"`
-		LastName    string   `json:"last_name"`
-		Phone       string   `json:"phone"`
-		Address     string   `json:"address"`
+		Username           string   `json:"username"`
+		Email              string   `json:"email"`
+		Password           string   `json:"password"`
+		Profession         string   `json:"profession"`
+		Description        string   `json:"description"`
+		Location           Location `json:"location"`
+		Name               string   `json:"name"`
+		LastName           string   `json:"last_name"`
+		Phone              string   `json:"phone"`
+		Address            string   `json:"address"`
+		RegistrationNumber string   `json:"registration_number"`
 	}
 	Location struct {
 		Department string `json:"department"`
@@ -76,11 +80,31 @@ func (co CreateOrderRequest) Validate() error {
 	if err != nil {
 		return errors.ErrInvalidScheduleTo
 	}
+	if co.Address == "" {
+		return errors.EmptyAddress
+	}
 
+	if co.Description == "" {
+		return errors.EmptyDescription
+	}
+
+	// validate date
 	loc, _ := time.LoadLocation("America/Sao_Paulo")
 	timeInLoc := parsedTime.In(loc)
 	if timeInLoc.Before(time.Now().In(loc)) {
 		return errors.ErrInvalidScheduleTo
+	}
+
+	// validate location
+	locations, err := utils.GetLocations()
+	if err != nil {
+		return errors2.New("failed to load locations")
+	}
+
+	// Validación de la ubicación
+	err = utils.ValidateLocation(co.Location.Department, co.Location.District, locations)
+	if err != nil {
+		return errors.ErrInvalidLocation
 	}
 	return nil
 }
@@ -127,6 +151,9 @@ func (rp RegisterProfessionalRequest) Validate() error {
 	if rp.Address == "" {
 		return errors.EmptyAddress
 	}
+	if rp.RegistrationNumber == "" {
+		return errors.EmptyRegistrationNumber
+	}
 
 	if err := IsValidEmail(rp.Email); err != nil {
 		return err
@@ -137,7 +164,7 @@ func (rp RegisterProfessionalRequest) Validate() error {
 	}
 
 	// Cargar ubicaciones válidas
-	locations, err := utils.LoadLocations()
+	locations, err := utils.GetLocations()
 	if err != nil {
 		return errors2.New("failed to load locations")
 	}

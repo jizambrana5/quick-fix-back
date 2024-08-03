@@ -35,6 +35,7 @@ services:
       DB_PASSWORD: admin1234
       DB_NAME: postgres
       DB_PORT: 5432
+      # GIN_MODE: release
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/ping || exit 1"]
       interval: 10s

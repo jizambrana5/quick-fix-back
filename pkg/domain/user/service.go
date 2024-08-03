@@ -22,6 +22,7 @@ type Storage interface {
 	GetUserByEmail(ctx context.Context, email string) (domain.User, error)
 	GetProfessionalByEmail(ctx context.Context, email string) (domain.Professional, error)
 	FindProfessionalsByLocation(ctx context.Context, department, district string) ([]domain.Professional, error)
+	FindProfessionalsByLocationAndProfession(ctx context.Context, department string, district string, profession string) ([]domain.Professional, error)
 }
 
 func NewUserService(storage Storage) *Service {

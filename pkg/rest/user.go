@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/jizambrana5/quickfix-back/pkg/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -92,6 +93,35 @@ func (h *Handler) GetProfessionalsByLocation(c *gin.Context) {
 	district := c.Param("district")
 
 	professionals, err := h.userService.FindProfessionalsByLocation(c.Request.Context(), department, district)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, professionals)
+}
+
+func (h *Handler) GetProfessionalsByLocationAndProfession(c *gin.Context) {
+	department := c.Param("department")
+	district := c.Param("district")
+	profession := c.Param("profession")
+
+	locations, err := utils.GetLocations()
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	if err = utils.ValidateLocation(department, district, locations); err != nil {
+		handleError(c, err)
+		return
+	}
+
+	if ok := utils.ValidateProfession(profession); !ok {
+		handleError(c, err)
+		return
+	}
+
+	professionals, err := h.userService.FindProfessionalsByLocationAndProfession(c.Request.Context(), department, district, profession)
 	if err != nil {
 		handleError(c, err)
 		return

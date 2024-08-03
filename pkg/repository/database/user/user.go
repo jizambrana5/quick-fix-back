@@ -110,3 +110,15 @@ func (r *Repository) FindProfessionalsByLocation(ctx context.Context, department
 	}
 	return domainProfessionals, nil
 }
+
+func (r *Repository) FindProfessionalsByLocationAndProfession(ctx context.Context, department, district, profession string) ([]domain.Professional, error) {
+	var professionals []ProfessionalRepo
+	if err := r.DB.WithContext(ctx).Where("location_department = ? AND location_district = ? AND profession = ?", department, district, profession).Find(&professionals).Error; err != nil {
+		return nil, err
+	}
+	var domainProfessionals []domain.Professional
+	for _, prof := range professionals {
+		domainProfessionals = append(domainProfessionals, prof.ToDomain())
+	}
+	return domainProfessionals, nil
+}

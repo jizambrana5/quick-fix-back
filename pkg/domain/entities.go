@@ -21,11 +21,14 @@ const (
 
 type (
 	Order struct {
-		ID             string `json:"id"`
-		UserID         uint64 `json:"user_id"`
-		ProfessionalID uint64 `json:"professional_id"`
-		Status         Status `json:"status"`
-		Dates          Dates  `json:"dates"`
+		ID             string   `json:"id"`
+		UserID         uint64   `json:"user_id"`
+		ProfessionalID uint64   `json:"professional_id"`
+		Status         Status   `json:"status"`
+		Dates          Dates    `json:"dates"`
+		Address        string   `json:"address"`
+		Location       Location `json:"location"`
+		Description    string   `json:"description"`
 	}
 	Dates struct {
 		CreatedAt  time.Time `json:"created_at"`
@@ -39,22 +42,31 @@ type (
 		Username  string    `json:"username"`
 		Email     string    `json:"email"`
 		Password  string    `json:"-"`
+		Name      string    `json:"name"`
+		LastName  string    `json:"last_name"`
+		Phone     string    `json:"phone"`
+		Address   string    `json:"address"`
 		Role      string    `json:"role"`
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
 	}
 
 	Professional struct {
-		ID          uint64    `json:"id"`
-		Username    string    `json:"username"`
-		Email       string    `json:"email"`
-		Password    string    `json:"-"`
-		Role        string    `json:"role"`
-		Profession  string    `json:"profession"`
-		Description string    `json:"description"`
-		CreatedAt   time.Time `json:"created_at"`
-		UpdatedAt   time.Time `json:"updated_at"`
-		Location    Location  `json:"location"`
+		ID                 uint64     `json:"id"`
+		Username           string     `json:"username"`
+		Email              string     `json:"email"`
+		Password           string     `json:"-"`
+		Role               string     `json:"role"`
+		Profession         Profession `json:"profession"`
+		Description        string     `json:"description"`
+		CreatedAt          time.Time  `json:"created_at"`
+		UpdatedAt          time.Time  `json:"updated_at"`
+		Location           Location   `json:"location"`
+		Name               string     `json:"name"`
+		LastName           string     `json:"last_name"`
+		Phone              string     `json:"phone"`
+		Address            string     `json:"address"`
+		RegistrationNumber string     `json:"registration_number"`
 	}
 	Location struct {
 		Department string `json:"department"`

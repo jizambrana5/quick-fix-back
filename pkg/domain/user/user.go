@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -37,6 +38,13 @@ func (s *Service) RegisterUser(ctx context.Context, userReq entities.RegisterUse
 	user.Role = "user"
 	user.Email = userReq.Email
 	user.Username = userReq.Username
+	user.Name = userReq.Name
+	user.LastName = userReq.LastName
+	user.Phone += userReq.Phone
+	user.Address = userReq.Address
+	loc, _ := time.LoadLocation("America/Sao_Paulo")
+	user.CreatedAt = time.Now().In(loc)
+	user.UpdatedAt = time.Now().In(loc)
 
 	createdUser, err := s.storage.CreateUser(ctx, user)
 	if err != nil {
@@ -72,11 +80,19 @@ func (s *Service) RegisterProfessional(ctx context.Context, professionalReq enti
 	prof.Password = string(hashedPassword)
 	prof.Role = "professional"
 	prof.Description = professionalReq.Description
-	prof.Profession = professionalReq.Profession
+	prof.Profession = domain.Profession(professionalReq.Profession)
 	prof.Email = professionalReq.Email
 	prof.Username = professionalReq.Username
 	prof.Location.Department = professionalReq.Location.Department
 	prof.Location.District = professionalReq.Location.District
+	prof.Name = professionalReq.Name
+	prof.LastName = professionalReq.LastName
+	prof.Phone = professionalReq.Phone
+	prof.Address = professionalReq.Address
+	prof.RegistrationNumber = professionalReq.RegistrationNumber
+	loc, _ := time.LoadLocation("America/Sao_Paulo")
+	prof.CreatedAt = time.Now().In(loc)
+	prof.UpdatedAt = time.Now().In(loc)
 
 	createdProfessional, err := s.storage.CreateProfessional(ctx, prof)
 	if err != nil {
@@ -110,6 +126,14 @@ func (s *Service) GetProfessional(ctx context.Context, ID uint64) (domain.Profes
 
 func (s *Service) FindProfessionalsByLocation(ctx context.Context, department, district string) ([]domain.Professional, error) {
 	professionals, err := s.storage.FindProfessionalsByLocation(ctx, department, district)
+	if err != nil {
+		return nil, errors.ProfessionalGet
+	}
+	return professionals, nil
+}
+
+func (s *Service) FindProfessionalsByLocationAndProfession(ctx context.Context, department, district, profession string) ([]domain.Professional, error) {
+	professionals, err := s.storage.FindProfessionalsByLocationAndProfession(ctx, department, district, profession)
 	if err != nil {
 		return nil, errors.ProfessionalGet
 	}
