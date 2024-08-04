@@ -11,9 +11,9 @@ func Routes(h *Handler) *gin.Engine {
 	// Configuración de CORS
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
-	config.AllowOrigins = []string{"http://localhost:3000"} // Cambia esto si es necesario
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
+	config.AllowCredentials = true
 
 	r.Use(cors.New(config))
 
