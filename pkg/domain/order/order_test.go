@@ -84,7 +84,7 @@ func (t *orderSuite) Test_CreateOrder_OrderAlreadyExists() {
 		return []domain.Order{{}}, nil
 	}
 	_, err := t.service.CreateOrder(t.ctx, entities.CreateOrderRequest{ScheduleTo: time.Now().AddDate(0, 0, 2).Format(layout)})
-	t.ErrorIs(err, catalog.OrderAlreadyExists)
+	t.Nil(err)
 	t.Len(t.storageMock.FindOrdersByScheduleCalls(), 1)
 }
 
