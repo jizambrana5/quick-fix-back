@@ -52,9 +52,15 @@ type (
 		Address            string   `json:"address"`
 		RegistrationNumber string   `json:"registration_number"`
 	}
+
 	Location struct {
 		Department string `json:"department"`
 		District   string `json:"district"`
+	}
+
+	LoginRequest struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 )
 

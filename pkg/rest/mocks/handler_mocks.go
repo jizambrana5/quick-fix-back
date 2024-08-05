@@ -29,6 +29,12 @@ import (
 //			GetUserFunc: func(ctx context.Context, ID uint64) (domain.User, error) {
 //				panic("mock out the GetUser method")
 //			},
+//			LoginProfessionalFunc: func(ctx context.Context, email string, password string) (domain.Professional, error) {
+//				panic("mock out the LoginProfessional method")
+//			},
+//			LoginUserFunc: func(ctx context.Context, email string, password string) (domain.User, error) {
+//				panic("mock out the LoginUser method")
+//			},
 //			RegisterProfessionalFunc: func(ctx context.Context, professionalReq entities.RegisterProfessionalRequest) (domain.Professional, error) {
 //				panic("mock out the RegisterProfessional method")
 //			},
@@ -53,6 +59,12 @@ type UserServiceMock struct {
 
 	// GetUserFunc mocks the GetUser method.
 	GetUserFunc func(ctx context.Context, ID uint64) (domain.User, error)
+
+	// LoginProfessionalFunc mocks the LoginProfessional method.
+	LoginProfessionalFunc func(ctx context.Context, email string, password string) (domain.Professional, error)
+
+	// LoginUserFunc mocks the LoginUser method.
+	LoginUserFunc func(ctx context.Context, email string, password string) (domain.User, error)
 
 	// RegisterProfessionalFunc mocks the RegisterProfessional method.
 	RegisterProfessionalFunc func(ctx context.Context, professionalReq entities.RegisterProfessionalRequest) (domain.Professional, error)
@@ -96,6 +108,24 @@ type UserServiceMock struct {
 			// ID is the ID argument value.
 			ID uint64
 		}
+		// LoginProfessional holds details about calls to the LoginProfessional method.
+		LoginProfessional []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// Email is the email argument value.
+			Email string
+			// Password is the password argument value.
+			Password string
+		}
+		// LoginUser holds details about calls to the LoginUser method.
+		LoginUser []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// Email is the email argument value.
+			Email string
+			// Password is the password argument value.
+			Password string
+		}
 		// RegisterProfessional holds details about calls to the RegisterProfessional method.
 		RegisterProfessional []struct {
 			// Ctx is the ctx argument value.
@@ -115,6 +145,8 @@ type UserServiceMock struct {
 	lockFindProfessionalsByLocationAndProfession sync.RWMutex
 	lockGetProfessional                          sync.RWMutex
 	lockGetUser                                  sync.RWMutex
+	lockLoginProfessional                        sync.RWMutex
+	lockLoginUser                                sync.RWMutex
 	lockRegisterProfessional                     sync.RWMutex
 	lockRegisterUser                             sync.RWMutex
 }
@@ -272,6 +304,86 @@ func (mock *UserServiceMock) GetUserCalls() []struct {
 	mock.lockGetUser.RLock()
 	calls = mock.calls.GetUser
 	mock.lockGetUser.RUnlock()
+	return calls
+}
+
+// LoginProfessional calls LoginProfessionalFunc.
+func (mock *UserServiceMock) LoginProfessional(ctx context.Context, email string, password string) (domain.Professional, error) {
+	if mock.LoginProfessionalFunc == nil {
+		panic("UserServiceMock.LoginProfessionalFunc: method is nil but UserService.LoginProfessional was just called")
+	}
+	callInfo := struct {
+		Ctx      context.Context
+		Email    string
+		Password string
+	}{
+		Ctx:      ctx,
+		Email:    email,
+		Password: password,
+	}
+	mock.lockLoginProfessional.Lock()
+	mock.calls.LoginProfessional = append(mock.calls.LoginProfessional, callInfo)
+	mock.lockLoginProfessional.Unlock()
+	return mock.LoginProfessionalFunc(ctx, email, password)
+}
+
+// LoginProfessionalCalls gets all the calls that were made to LoginProfessional.
+// Check the length with:
+//
+//	len(mockedUserService.LoginProfessionalCalls())
+func (mock *UserServiceMock) LoginProfessionalCalls() []struct {
+	Ctx      context.Context
+	Email    string
+	Password string
+} {
+	var calls []struct {
+		Ctx      context.Context
+		Email    string
+		Password string
+	}
+	mock.lockLoginProfessional.RLock()
+	calls = mock.calls.LoginProfessional
+	mock.lockLoginProfessional.RUnlock()
+	return calls
+}
+
+// LoginUser calls LoginUserFunc.
+func (mock *UserServiceMock) LoginUser(ctx context.Context, email string, password string) (domain.User, error) {
+	if mock.LoginUserFunc == nil {
+		panic("UserServiceMock.LoginUserFunc: method is nil but UserService.LoginUser was just called")
+	}
+	callInfo := struct {
+		Ctx      context.Context
+		Email    string
+		Password string
+	}{
+		Ctx:      ctx,
+		Email:    email,
+		Password: password,
+	}
+	mock.lockLoginUser.Lock()
+	mock.calls.LoginUser = append(mock.calls.LoginUser, callInfo)
+	mock.lockLoginUser.Unlock()
+	return mock.LoginUserFunc(ctx, email, password)
+}
+
+// LoginUserCalls gets all the calls that were made to LoginUser.
+// Check the length with:
+//
+//	len(mockedUserService.LoginUserCalls())
+func (mock *UserServiceMock) LoginUserCalls() []struct {
+	Ctx      context.Context
+	Email    string
+	Password string
+} {
+	var calls []struct {
+		Ctx      context.Context
+		Email    string
+		Password string
+	}
+	mock.lockLoginUser.RLock()
+	calls = mock.calls.LoginUser
+	mock.lockLoginUser.RUnlock()
 	return calls
 }
 

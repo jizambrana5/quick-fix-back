@@ -59,6 +59,7 @@ func (u *UserRepo) ToDomain() domain.User {
 		Phone:     u.Phone,
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
+		Password:  u.Password,
 	}
 }
 
@@ -99,6 +100,7 @@ func (p *ProfessionalRepo) ToDomain() domain.Professional {
 			District:   p.Location.District,
 		},
 		RegistrationNumber: p.RegistrationNumber,
+		Password:           p.Password,
 	}
 }
 

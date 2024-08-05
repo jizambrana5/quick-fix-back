@@ -42,5 +42,9 @@ func Routes(h *Handler) *gin.Engine {
 	// Ruta para obtener ubicaciones
 	r.GET("/locations", h.GetLocations)
 
+	// Login
+	r.POST("/user/login", h.LoginUser)
+	r.POST("/professional/login", h.LoginProfessional)
+
 	return r
 }
