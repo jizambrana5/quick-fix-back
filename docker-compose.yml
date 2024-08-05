@@ -20,7 +20,7 @@ services:
 
   api:
     build:
-      context: ./
+      context: .
       dockerfile: Dockerfile
     container_name: quick-fix-back-api
     depends_on:
@@ -44,20 +44,6 @@ services:
       - backend-network
     volumes:
       - ./pkg/utils/mendoza_locations.json:/app/pkg/utils/mendoza_locations.json
-
-  svelte-app:
-    build:
-      context: ./quick-fix-front
-      dockerfile: Dockerfile
-    container_name: quick-fix-front
-    ports:
-      - "3000:3000"
-    environment:
-      VITE_API_BASE_URL: http://api:8080
-    depends_on:
-      - api
-    networks:
-      - backend-network
 
 volumes:
   postgres-data:
