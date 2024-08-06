@@ -46,8 +46,12 @@ type (
 		GetProfessional(ctx context.Context, ID uint64) (domain.Professional, error)
 		FindProfessionalsByLocation(ctx context.Context, department string, district string) ([]domain.Professional, error)
 		FindProfessionalsByLocationAndProfession(ctx context.Context, department string, district string, profession string) ([]domain.Professional, error)
-		LoginUser(ctx context.Context, email string, password string) (domain.User, error)
-		LoginProfessional(ctx context.Context, email string, password string) (domain.Professional, error)
+		LoginUser(ctx context.Context, email string, password string) (domain.User, string, error)
+		LoginProfessional(ctx context.Context, email string, password string) (domain.Professional, string, error)
+		CreateSession(ctx context.Context, userID uint64) (string, error)
+		ValidateSession(ctx context.Context, token string) (entities.Session, error)
+		DeleteSession(ctx context.Context, token string) error
+		DeleteExpiredSessions(ctx context.Context) error
 	}
 )
 
@@ -76,41 +80,4 @@ func (h *Handler) GetLocations(c *gin.Context) {
 
 	fmt.Println("locations:", locations)
 	c.JSON(http.StatusOK, locations)
-}
-
-// LoginUser maneja el inicio de sesión de los usuarios
-func (h *Handler) LoginUser(c *gin.Context) {
-	var req entities.LoginRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	user, err := h.userService.LoginUser(c.Request.Context(), req.Email, req.Password)
-	if err != nil {
-		handleError(c, err)
-		return
-	}
-
-	// Aquí es donde se puede establecer la sesión del usuario.
-	// Para simplicidad, vamos a retornar el usuario directamente.
-	c.JSON(http.StatusOK, user)
-}
-
-// Handler
-// LoginProfessional maneja el inicio de sesión de los profesionales
-func (h *Handler) LoginProfessional(c *gin.Context) {
-	var req entities.LoginRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	professional, err := h.userService.LoginProfessional(c.Request.Context(), req.Email, req.Password)
-	if err != nil {
-		handleError(c, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, professional)
 }

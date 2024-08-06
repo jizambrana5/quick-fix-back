@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Routes(h *Handler) *gin.Engine {
+func Routes(h *Handler, userService UserService) *gin.Engine {
 	r := gin.Default()
 
 	// Configuración de CORS
@@ -17,34 +17,40 @@ func Routes(h *Handler) *gin.Engine {
 
 	r.Use(cors.New(config))
 
+	// Middleware de autenticación
+	authMiddleware := NewAuthMiddleware(userService)
+
 	// Ruta de ping
 	r.GET("/ping", h.PingHandler)
 
-	// Rutas de órdenes
-	r.GET("/order/:order_id", h.GetOrder)
-	r.GET("/order/user/:user_id", h.GetOrdersByUser)
-	r.GET("/order/professional/:professional_id", h.GetOrderByProfessional)
-	r.GET("/order/professional/:professional_id/day/:day", h.GetOrdersByProfessionalAndDay)
+	// Rutas de órdenes protegidas
+	auth := r.Group("/")
+	auth.Use(authMiddleware.Middleware())
+	{
+		auth.GET("/order/:order_id", h.GetOrder)
+		auth.GET("/order/user/:user_id", h.GetOrdersByUser)
+		auth.GET("/order/professional/:professional_id", h.GetOrderByProfessional)
+		auth.GET("/order/professional/:professional_id/day/:day", h.GetOrdersByProfessionalAndDay)
+		auth.POST("/order", h.CreateOrder)
+		auth.PUT("/order/:order_id/accept", h.AcceptOrder)
+		auth.PUT("/order/:order_id/complete", h.CompleteOrder)
+		auth.PUT("/order/:order_id/cancel", h.CancelOrder)
+		auth.GET("/user/:user_id", h.GetUser)
+		auth.GET("/professional/:professional_id", h.GetProfessional)
+		auth.GET("/professionals/location/:department/:district", h.GetProfessionalsByLocation)
+		auth.GET("/professionals/:department/:district/:profession", h.GetProfessionalsByLocationAndProfession)
+	}
 
-	r.POST("/order", h.CreateOrder)
-	r.PUT("/order/:order_id/accept", h.AcceptOrder)
-	r.PUT("/order/:order_id/complete", h.CompleteOrder)
-	r.PUT("/order/:order_id/cancel", h.CancelOrder)
-
-	// Rutas de registro
-	r.POST("/user", h.CreateUser)
-	r.GET("/user/:user_id", h.GetUser)
-	r.POST("/professional", h.CreateProfessional)
-	r.GET("/professional/:professional_id", h.GetProfessional)
-	r.GET("/professionals/location/:department/:district", h.GetProfessionalsByLocation)
-	r.GET("/professionals/:department/:district/:profession", h.GetProfessionalsByLocationAndProfession)
-
-	// Ruta para obtener ubicaciones
+	// Rutas de registro y login
 	r.GET("/locations", h.GetLocations)
 
-	// Login
+	r.POST("/user", h.CreateUser)
+	r.POST("/professional", h.CreateProfessional)
 	r.POST("/user/login", h.LoginUser)
 	r.POST("/professional/login", h.LoginProfessional)
+
+	// Añadir en tu archivo de rutas
+	r.POST("/logout", h.Logout)
 
 	return r
 }

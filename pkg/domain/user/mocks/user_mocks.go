@@ -6,6 +6,7 @@ package mocks
 import (
 	"context"
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
+	"github.com/jizambrana5/quickfix-back/pkg/entities"
 	"sync"
 )
 
@@ -18,8 +19,17 @@ import (
 //			CreateProfessionalFunc: func(ctx context.Context, professional domain.Professional) (domain.Professional, error) {
 //				panic("mock out the CreateProfessional method")
 //			},
+//			CreateSessionFunc: func(ctx context.Context, session entities.Session) error {
+//				panic("mock out the CreateSession method")
+//			},
 //			CreateUserFunc: func(ctx context.Context, user domain.User) (domain.User, error) {
 //				panic("mock out the CreateUser method")
+//			},
+//			DeleteExpiredSessionsFunc: func(ctx context.Context) error {
+//				panic("mock out the DeleteExpiredSessions method")
+//			},
+//			DeleteSessionFunc: func(ctx context.Context, token string) error {
+//				panic("mock out the DeleteSession method")
 //			},
 //			FindProfessionalsByLocationFunc: func(ctx context.Context, department string, district string) ([]domain.Professional, error) {
 //				panic("mock out the FindProfessionalsByLocation method")
@@ -35,6 +45,9 @@ import (
 //			},
 //			GetProfessionalByUsernameFunc: func(ctx context.Context, username string) (domain.Professional, error) {
 //				panic("mock out the GetProfessionalByUsername method")
+//			},
+//			GetSessionByTokenFunc: func(ctx context.Context, token string) (entities.Session, error) {
+//				panic("mock out the GetSessionByToken method")
 //			},
 //			GetUserByEmailFunc: func(ctx context.Context, email string) (domain.User, error) {
 //				panic("mock out the GetUserByEmail method")
@@ -55,8 +68,17 @@ type StorageMock struct {
 	// CreateProfessionalFunc mocks the CreateProfessional method.
 	CreateProfessionalFunc func(ctx context.Context, professional domain.Professional) (domain.Professional, error)
 
+	// CreateSessionFunc mocks the CreateSession method.
+	CreateSessionFunc func(ctx context.Context, session entities.Session) error
+
 	// CreateUserFunc mocks the CreateUser method.
 	CreateUserFunc func(ctx context.Context, user domain.User) (domain.User, error)
+
+	// DeleteExpiredSessionsFunc mocks the DeleteExpiredSessions method.
+	DeleteExpiredSessionsFunc func(ctx context.Context) error
+
+	// DeleteSessionFunc mocks the DeleteSession method.
+	DeleteSessionFunc func(ctx context.Context, token string) error
 
 	// FindProfessionalsByLocationFunc mocks the FindProfessionalsByLocation method.
 	FindProfessionalsByLocationFunc func(ctx context.Context, department string, district string) ([]domain.Professional, error)
@@ -72,6 +94,9 @@ type StorageMock struct {
 
 	// GetProfessionalByUsernameFunc mocks the GetProfessionalByUsername method.
 	GetProfessionalByUsernameFunc func(ctx context.Context, username string) (domain.Professional, error)
+
+	// GetSessionByTokenFunc mocks the GetSessionByToken method.
+	GetSessionByTokenFunc func(ctx context.Context, token string) (entities.Session, error)
 
 	// GetUserByEmailFunc mocks the GetUserByEmail method.
 	GetUserByEmailFunc func(ctx context.Context, email string) (domain.User, error)
@@ -91,12 +116,31 @@ type StorageMock struct {
 			// Professional is the professional argument value.
 			Professional domain.Professional
 		}
+		// CreateSession holds details about calls to the CreateSession method.
+		CreateSession []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// Session is the session argument value.
+			Session entities.Session
+		}
 		// CreateUser holds details about calls to the CreateUser method.
 		CreateUser []struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// User is the user argument value.
 			User domain.User
+		}
+		// DeleteExpiredSessions holds details about calls to the DeleteExpiredSessions method.
+		DeleteExpiredSessions []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+		}
+		// DeleteSession holds details about calls to the DeleteSession method.
+		DeleteSession []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// Token is the token argument value.
+			Token string
 		}
 		// FindProfessionalsByLocation holds details about calls to the FindProfessionalsByLocation method.
 		FindProfessionalsByLocation []struct {
@@ -139,6 +183,13 @@ type StorageMock struct {
 			// Username is the username argument value.
 			Username string
 		}
+		// GetSessionByToken holds details about calls to the GetSessionByToken method.
+		GetSessionByToken []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// Token is the token argument value.
+			Token string
+		}
 		// GetUserByEmail holds details about calls to the GetUserByEmail method.
 		GetUserByEmail []struct {
 			// Ctx is the ctx argument value.
@@ -162,12 +213,16 @@ type StorageMock struct {
 		}
 	}
 	lockCreateProfessional                       sync.RWMutex
+	lockCreateSession                            sync.RWMutex
 	lockCreateUser                               sync.RWMutex
+	lockDeleteExpiredSessions                    sync.RWMutex
+	lockDeleteSession                            sync.RWMutex
 	lockFindProfessionalsByLocation              sync.RWMutex
 	lockFindProfessionalsByLocationAndProfession sync.RWMutex
 	lockGetProfessionalByEmail                   sync.RWMutex
 	lockGetProfessionalByID                      sync.RWMutex
 	lockGetProfessionalByUsername                sync.RWMutex
+	lockGetSessionByToken                        sync.RWMutex
 	lockGetUserByEmail                           sync.RWMutex
 	lockGetUserByID                              sync.RWMutex
 	lockGetUserByUsername                        sync.RWMutex
@@ -209,6 +264,42 @@ func (mock *StorageMock) CreateProfessionalCalls() []struct {
 	return calls
 }
 
+// CreateSession calls CreateSessionFunc.
+func (mock *StorageMock) CreateSession(ctx context.Context, session entities.Session) error {
+	if mock.CreateSessionFunc == nil {
+		panic("StorageMock.CreateSessionFunc: method is nil but Storage.CreateSession was just called")
+	}
+	callInfo := struct {
+		Ctx     context.Context
+		Session entities.Session
+	}{
+		Ctx:     ctx,
+		Session: session,
+	}
+	mock.lockCreateSession.Lock()
+	mock.calls.CreateSession = append(mock.calls.CreateSession, callInfo)
+	mock.lockCreateSession.Unlock()
+	return mock.CreateSessionFunc(ctx, session)
+}
+
+// CreateSessionCalls gets all the calls that were made to CreateSession.
+// Check the length with:
+//
+//	len(mockedStorage.CreateSessionCalls())
+func (mock *StorageMock) CreateSessionCalls() []struct {
+	Ctx     context.Context
+	Session entities.Session
+} {
+	var calls []struct {
+		Ctx     context.Context
+		Session entities.Session
+	}
+	mock.lockCreateSession.RLock()
+	calls = mock.calls.CreateSession
+	mock.lockCreateSession.RUnlock()
+	return calls
+}
+
 // CreateUser calls CreateUserFunc.
 func (mock *StorageMock) CreateUser(ctx context.Context, user domain.User) (domain.User, error) {
 	if mock.CreateUserFunc == nil {
@@ -242,6 +333,74 @@ func (mock *StorageMock) CreateUserCalls() []struct {
 	mock.lockCreateUser.RLock()
 	calls = mock.calls.CreateUser
 	mock.lockCreateUser.RUnlock()
+	return calls
+}
+
+// DeleteExpiredSessions calls DeleteExpiredSessionsFunc.
+func (mock *StorageMock) DeleteExpiredSessions(ctx context.Context) error {
+	if mock.DeleteExpiredSessionsFunc == nil {
+		panic("StorageMock.DeleteExpiredSessionsFunc: method is nil but Storage.DeleteExpiredSessions was just called")
+	}
+	callInfo := struct {
+		Ctx context.Context
+	}{
+		Ctx: ctx,
+	}
+	mock.lockDeleteExpiredSessions.Lock()
+	mock.calls.DeleteExpiredSessions = append(mock.calls.DeleteExpiredSessions, callInfo)
+	mock.lockDeleteExpiredSessions.Unlock()
+	return mock.DeleteExpiredSessionsFunc(ctx)
+}
+
+// DeleteExpiredSessionsCalls gets all the calls that were made to DeleteExpiredSessions.
+// Check the length with:
+//
+//	len(mockedStorage.DeleteExpiredSessionsCalls())
+func (mock *StorageMock) DeleteExpiredSessionsCalls() []struct {
+	Ctx context.Context
+} {
+	var calls []struct {
+		Ctx context.Context
+	}
+	mock.lockDeleteExpiredSessions.RLock()
+	calls = mock.calls.DeleteExpiredSessions
+	mock.lockDeleteExpiredSessions.RUnlock()
+	return calls
+}
+
+// DeleteSession calls DeleteSessionFunc.
+func (mock *StorageMock) DeleteSession(ctx context.Context, token string) error {
+	if mock.DeleteSessionFunc == nil {
+		panic("StorageMock.DeleteSessionFunc: method is nil but Storage.DeleteSession was just called")
+	}
+	callInfo := struct {
+		Ctx   context.Context
+		Token string
+	}{
+		Ctx:   ctx,
+		Token: token,
+	}
+	mock.lockDeleteSession.Lock()
+	mock.calls.DeleteSession = append(mock.calls.DeleteSession, callInfo)
+	mock.lockDeleteSession.Unlock()
+	return mock.DeleteSessionFunc(ctx, token)
+}
+
+// DeleteSessionCalls gets all the calls that were made to DeleteSession.
+// Check the length with:
+//
+//	len(mockedStorage.DeleteSessionCalls())
+func (mock *StorageMock) DeleteSessionCalls() []struct {
+	Ctx   context.Context
+	Token string
+} {
+	var calls []struct {
+		Ctx   context.Context
+		Token string
+	}
+	mock.lockDeleteSession.RLock()
+	calls = mock.calls.DeleteSession
+	mock.lockDeleteSession.RUnlock()
 	return calls
 }
 
@@ -434,6 +593,42 @@ func (mock *StorageMock) GetProfessionalByUsernameCalls() []struct {
 	mock.lockGetProfessionalByUsername.RLock()
 	calls = mock.calls.GetProfessionalByUsername
 	mock.lockGetProfessionalByUsername.RUnlock()
+	return calls
+}
+
+// GetSessionByToken calls GetSessionByTokenFunc.
+func (mock *StorageMock) GetSessionByToken(ctx context.Context, token string) (entities.Session, error) {
+	if mock.GetSessionByTokenFunc == nil {
+		panic("StorageMock.GetSessionByTokenFunc: method is nil but Storage.GetSessionByToken was just called")
+	}
+	callInfo := struct {
+		Ctx   context.Context
+		Token string
+	}{
+		Ctx:   ctx,
+		Token: token,
+	}
+	mock.lockGetSessionByToken.Lock()
+	mock.calls.GetSessionByToken = append(mock.calls.GetSessionByToken, callInfo)
+	mock.lockGetSessionByToken.Unlock()
+	return mock.GetSessionByTokenFunc(ctx, token)
+}
+
+// GetSessionByTokenCalls gets all the calls that were made to GetSessionByToken.
+// Check the length with:
+//
+//	len(mockedStorage.GetSessionByTokenCalls())
+func (mock *StorageMock) GetSessionByTokenCalls() []struct {
+	Ctx   context.Context
+	Token string
+} {
+	var calls []struct {
+		Ctx   context.Context
+		Token string
+	}
+	mock.lockGetSessionByToken.RLock()
+	calls = mock.calls.GetSessionByToken
+	mock.lockGetSessionByToken.RUnlock()
 	return calls
 }
 

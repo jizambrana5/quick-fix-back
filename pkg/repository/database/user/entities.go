@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
+	"github.com/jizambrana5/quickfix-back/pkg/entities"
 	"gorm.io/gorm"
 	"time"
 )
@@ -44,6 +45,14 @@ type ProfessionalRepo struct {
 type LocationRepo struct {
 	Department string `gorm:"type:varchar(100);not null"`
 	District   string `gorm:"type:varchar(100);not null"`
+}
+
+type SessionRepo struct {
+	SessionID int64     `gorm:"primaryKey" json:"session_id"`
+	UserID    uint64    `gorm:"not null" json:"user_id"`
+	Token     string    `gorm:"not null" json:"token"`
+	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
+	ExpiresAt time.Time `gorm:"not null" json:"expires_at"`
 }
 
 // ToDomain converts UserRepo to domain.User
@@ -166,4 +175,26 @@ func (p *ProfessionalRepo) BeforeUpdate(tx *gorm.DB) (err error) {
 	}
 	p.UpdatedAt = time.Now().In(loc)
 	return
+}
+
+// FromDomainToSession convierte una entidad de dominio a una entidad del repositorio
+func FromDomainToSession(session entities.Session) SessionRepo {
+	return SessionRepo{
+		SessionID: session.SessionID,
+		UserID:    session.UserID,
+		Token:     session.Token,
+		CreatedAt: session.CreatedAt,
+		ExpiresAt: session.ExpiresAt,
+	}
+}
+
+// ToDomain convierte una entidad del repositorio a una entidad de dominio
+func (s SessionRepo) ToDomain() entities.Session {
+	return entities.Session{
+		SessionID: s.SessionID,
+		UserID:    s.UserID,
+		Token:     s.Token,
+		CreatedAt: s.CreatedAt,
+		ExpiresAt: s.ExpiresAt,
+	}
 }

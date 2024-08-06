@@ -37,7 +37,7 @@ func NewRepository(config Config) *gorm.DB {
 	}
 
 	// AutoMigrate creará las tablas, columnas faltantes e índices faltantes
-	if err = db.AutoMigrate(&user.UserRepo{}, &user.ProfessionalRepo{}, &order.OrderRepo{}); err != nil {
+	if err = db.AutoMigrate(&user.UserRepo{}, &user.ProfessionalRepo{}, &order.OrderRepo{}, &user.SessionRepo{}); err != nil {
 		log.Fatalf("Error auto migrating models: %s", err)
 		panic(err)
 	}

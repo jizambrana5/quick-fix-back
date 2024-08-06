@@ -17,6 +17,15 @@ import (
 //
 //		// make and configure a mocked rest.UserService
 //		mockedUserService := &UserServiceMock{
+//			CreateSessionFunc: func(ctx context.Context, userID uint64) (string, error) {
+//				panic("mock out the CreateSession method")
+//			},
+//			DeleteExpiredSessionsFunc: func(ctx context.Context) error {
+//				panic("mock out the DeleteExpiredSessions method")
+//			},
+//			DeleteSessionFunc: func(ctx context.Context, token string) error {
+//				panic("mock out the DeleteSession method")
+//			},
 //			FindProfessionalsByLocationFunc: func(ctx context.Context, department string, district string) ([]domain.Professional, error) {
 //				panic("mock out the FindProfessionalsByLocation method")
 //			},
@@ -29,10 +38,10 @@ import (
 //			GetUserFunc: func(ctx context.Context, ID uint64) (domain.User, error) {
 //				panic("mock out the GetUser method")
 //			},
-//			LoginProfessionalFunc: func(ctx context.Context, email string, password string) (domain.Professional, error) {
+//			LoginProfessionalFunc: func(ctx context.Context, email string, password string) (domain.Professional, string, error) {
 //				panic("mock out the LoginProfessional method")
 //			},
-//			LoginUserFunc: func(ctx context.Context, email string, password string) (domain.User, error) {
+//			LoginUserFunc: func(ctx context.Context, email string, password string) (domain.User, string, error) {
 //				panic("mock out the LoginUser method")
 //			},
 //			RegisterProfessionalFunc: func(ctx context.Context, professionalReq entities.RegisterProfessionalRequest) (domain.Professional, error) {
@@ -41,6 +50,9 @@ import (
 //			RegisterUserFunc: func(ctx context.Context, userReq entities.RegisterUserRequest) (domain.User, error) {
 //				panic("mock out the RegisterUser method")
 //			},
+//			ValidateSessionFunc: func(ctx context.Context, token string) (entities.Session, error) {
+//				panic("mock out the ValidateSession method")
+//			},
 //		}
 //
 //		// use mockedUserService in code that requires rest.UserService
@@ -48,6 +60,15 @@ import (
 //
 //	}
 type UserServiceMock struct {
+	// CreateSessionFunc mocks the CreateSession method.
+	CreateSessionFunc func(ctx context.Context, userID uint64) (string, error)
+
+	// DeleteExpiredSessionsFunc mocks the DeleteExpiredSessions method.
+	DeleteExpiredSessionsFunc func(ctx context.Context) error
+
+	// DeleteSessionFunc mocks the DeleteSession method.
+	DeleteSessionFunc func(ctx context.Context, token string) error
+
 	// FindProfessionalsByLocationFunc mocks the FindProfessionalsByLocation method.
 	FindProfessionalsByLocationFunc func(ctx context.Context, department string, district string) ([]domain.Professional, error)
 
@@ -61,10 +82,10 @@ type UserServiceMock struct {
 	GetUserFunc func(ctx context.Context, ID uint64) (domain.User, error)
 
 	// LoginProfessionalFunc mocks the LoginProfessional method.
-	LoginProfessionalFunc func(ctx context.Context, email string, password string) (domain.Professional, error)
+	LoginProfessionalFunc func(ctx context.Context, email string, password string) (domain.Professional, string, error)
 
 	// LoginUserFunc mocks the LoginUser method.
-	LoginUserFunc func(ctx context.Context, email string, password string) (domain.User, error)
+	LoginUserFunc func(ctx context.Context, email string, password string) (domain.User, string, error)
 
 	// RegisterProfessionalFunc mocks the RegisterProfessional method.
 	RegisterProfessionalFunc func(ctx context.Context, professionalReq entities.RegisterProfessionalRequest) (domain.Professional, error)
@@ -72,8 +93,30 @@ type UserServiceMock struct {
 	// RegisterUserFunc mocks the RegisterUser method.
 	RegisterUserFunc func(ctx context.Context, userReq entities.RegisterUserRequest) (domain.User, error)
 
+	// ValidateSessionFunc mocks the ValidateSession method.
+	ValidateSessionFunc func(ctx context.Context, token string) (entities.Session, error)
+
 	// calls tracks calls to the methods.
 	calls struct {
+		// CreateSession holds details about calls to the CreateSession method.
+		CreateSession []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// UserID is the userID argument value.
+			UserID uint64
+		}
+		// DeleteExpiredSessions holds details about calls to the DeleteExpiredSessions method.
+		DeleteExpiredSessions []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+		}
+		// DeleteSession holds details about calls to the DeleteSession method.
+		DeleteSession []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// Token is the token argument value.
+			Token string
+		}
 		// FindProfessionalsByLocation holds details about calls to the FindProfessionalsByLocation method.
 		FindProfessionalsByLocation []struct {
 			// Ctx is the ctx argument value.
@@ -140,7 +183,17 @@ type UserServiceMock struct {
 			// UserReq is the userReq argument value.
 			UserReq entities.RegisterUserRequest
 		}
+		// ValidateSession holds details about calls to the ValidateSession method.
+		ValidateSession []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// Token is the token argument value.
+			Token string
+		}
 	}
+	lockCreateSession                            sync.RWMutex
+	lockDeleteExpiredSessions                    sync.RWMutex
+	lockDeleteSession                            sync.RWMutex
 	lockFindProfessionalsByLocation              sync.RWMutex
 	lockFindProfessionalsByLocationAndProfession sync.RWMutex
 	lockGetProfessional                          sync.RWMutex
@@ -149,6 +202,111 @@ type UserServiceMock struct {
 	lockLoginUser                                sync.RWMutex
 	lockRegisterProfessional                     sync.RWMutex
 	lockRegisterUser                             sync.RWMutex
+	lockValidateSession                          sync.RWMutex
+}
+
+// CreateSession calls CreateSessionFunc.
+func (mock *UserServiceMock) CreateSession(ctx context.Context, userID uint64) (string, error) {
+	if mock.CreateSessionFunc == nil {
+		panic("UserServiceMock.CreateSessionFunc: method is nil but UserService.CreateSession was just called")
+	}
+	callInfo := struct {
+		Ctx    context.Context
+		UserID uint64
+	}{
+		Ctx:    ctx,
+		UserID: userID,
+	}
+	mock.lockCreateSession.Lock()
+	mock.calls.CreateSession = append(mock.calls.CreateSession, callInfo)
+	mock.lockCreateSession.Unlock()
+	return mock.CreateSessionFunc(ctx, userID)
+}
+
+// CreateSessionCalls gets all the calls that were made to CreateSession.
+// Check the length with:
+//
+//	len(mockedUserService.CreateSessionCalls())
+func (mock *UserServiceMock) CreateSessionCalls() []struct {
+	Ctx    context.Context
+	UserID uint64
+} {
+	var calls []struct {
+		Ctx    context.Context
+		UserID uint64
+	}
+	mock.lockCreateSession.RLock()
+	calls = mock.calls.CreateSession
+	mock.lockCreateSession.RUnlock()
+	return calls
+}
+
+// DeleteExpiredSessions calls DeleteExpiredSessionsFunc.
+func (mock *UserServiceMock) DeleteExpiredSessions(ctx context.Context) error {
+	if mock.DeleteExpiredSessionsFunc == nil {
+		panic("UserServiceMock.DeleteExpiredSessionsFunc: method is nil but UserService.DeleteExpiredSessions was just called")
+	}
+	callInfo := struct {
+		Ctx context.Context
+	}{
+		Ctx: ctx,
+	}
+	mock.lockDeleteExpiredSessions.Lock()
+	mock.calls.DeleteExpiredSessions = append(mock.calls.DeleteExpiredSessions, callInfo)
+	mock.lockDeleteExpiredSessions.Unlock()
+	return mock.DeleteExpiredSessionsFunc(ctx)
+}
+
+// DeleteExpiredSessionsCalls gets all the calls that were made to DeleteExpiredSessions.
+// Check the length with:
+//
+//	len(mockedUserService.DeleteExpiredSessionsCalls())
+func (mock *UserServiceMock) DeleteExpiredSessionsCalls() []struct {
+	Ctx context.Context
+} {
+	var calls []struct {
+		Ctx context.Context
+	}
+	mock.lockDeleteExpiredSessions.RLock()
+	calls = mock.calls.DeleteExpiredSessions
+	mock.lockDeleteExpiredSessions.RUnlock()
+	return calls
+}
+
+// DeleteSession calls DeleteSessionFunc.
+func (mock *UserServiceMock) DeleteSession(ctx context.Context, token string) error {
+	if mock.DeleteSessionFunc == nil {
+		panic("UserServiceMock.DeleteSessionFunc: method is nil but UserService.DeleteSession was just called")
+	}
+	callInfo := struct {
+		Ctx   context.Context
+		Token string
+	}{
+		Ctx:   ctx,
+		Token: token,
+	}
+	mock.lockDeleteSession.Lock()
+	mock.calls.DeleteSession = append(mock.calls.DeleteSession, callInfo)
+	mock.lockDeleteSession.Unlock()
+	return mock.DeleteSessionFunc(ctx, token)
+}
+
+// DeleteSessionCalls gets all the calls that were made to DeleteSession.
+// Check the length with:
+//
+//	len(mockedUserService.DeleteSessionCalls())
+func (mock *UserServiceMock) DeleteSessionCalls() []struct {
+	Ctx   context.Context
+	Token string
+} {
+	var calls []struct {
+		Ctx   context.Context
+		Token string
+	}
+	mock.lockDeleteSession.RLock()
+	calls = mock.calls.DeleteSession
+	mock.lockDeleteSession.RUnlock()
+	return calls
 }
 
 // FindProfessionalsByLocation calls FindProfessionalsByLocationFunc.
@@ -308,7 +466,7 @@ func (mock *UserServiceMock) GetUserCalls() []struct {
 }
 
 // LoginProfessional calls LoginProfessionalFunc.
-func (mock *UserServiceMock) LoginProfessional(ctx context.Context, email string, password string) (domain.Professional, error) {
+func (mock *UserServiceMock) LoginProfessional(ctx context.Context, email string, password string) (domain.Professional, string, error) {
 	if mock.LoginProfessionalFunc == nil {
 		panic("UserServiceMock.LoginProfessionalFunc: method is nil but UserService.LoginProfessional was just called")
 	}
@@ -348,7 +506,7 @@ func (mock *UserServiceMock) LoginProfessionalCalls() []struct {
 }
 
 // LoginUser calls LoginUserFunc.
-func (mock *UserServiceMock) LoginUser(ctx context.Context, email string, password string) (domain.User, error) {
+func (mock *UserServiceMock) LoginUser(ctx context.Context, email string, password string) (domain.User, string, error) {
 	if mock.LoginUserFunc == nil {
 		panic("UserServiceMock.LoginUserFunc: method is nil but UserService.LoginUser was just called")
 	}
@@ -456,6 +614,42 @@ func (mock *UserServiceMock) RegisterUserCalls() []struct {
 	mock.lockRegisterUser.RLock()
 	calls = mock.calls.RegisterUser
 	mock.lockRegisterUser.RUnlock()
+	return calls
+}
+
+// ValidateSession calls ValidateSessionFunc.
+func (mock *UserServiceMock) ValidateSession(ctx context.Context, token string) (entities.Session, error) {
+	if mock.ValidateSessionFunc == nil {
+		panic("UserServiceMock.ValidateSessionFunc: method is nil but UserService.ValidateSession was just called")
+	}
+	callInfo := struct {
+		Ctx   context.Context
+		Token string
+	}{
+		Ctx:   ctx,
+		Token: token,
+	}
+	mock.lockValidateSession.Lock()
+	mock.calls.ValidateSession = append(mock.calls.ValidateSession, callInfo)
+	mock.lockValidateSession.Unlock()
+	return mock.ValidateSessionFunc(ctx, token)
+}
+
+// ValidateSessionCalls gets all the calls that were made to ValidateSession.
+// Check the length with:
+//
+//	len(mockedUserService.ValidateSessionCalls())
+func (mock *UserServiceMock) ValidateSessionCalls() []struct {
+	Ctx   context.Context
+	Token string
+} {
+	var calls []struct {
+		Ctx   context.Context
+		Token string
+	}
+	mock.lockValidateSession.RLock()
+	calls = mock.calls.ValidateSession
+	mock.lockValidateSession.RUnlock()
 	return calls
 }
 
