@@ -52,7 +52,7 @@ func main() {
 
 	handler := rest.NewHandler(orderSrv, userSrv)
 
-	server := rest.Routes(handler)
+	server := rest.Routes(handler, userSrv)
 	err = server.Run(fmt.Sprintf("%s%s", ":", "8080"))
 	if err != nil {
 		panic(err)

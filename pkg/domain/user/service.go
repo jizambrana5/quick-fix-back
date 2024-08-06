@@ -3,6 +3,7 @@ package user
 
 import (
 	"context"
+	"github.com/jizambrana5/quickfix-back/pkg/entities"
 
 	"github.com/jizambrana5/quickfix-back/pkg/domain"
 	"github.com/jizambrana5/quickfix-back/pkg/rest"
@@ -23,6 +24,11 @@ type Storage interface {
 	GetProfessionalByEmail(ctx context.Context, email string) (domain.Professional, error)
 	FindProfessionalsByLocation(ctx context.Context, department, district string) ([]domain.Professional, error)
 	FindProfessionalsByLocationAndProfession(ctx context.Context, department string, district string, profession string) ([]domain.Professional, error)
+
+	CreateSession(ctx context.Context, session entities.Session) error
+	GetSessionByToken(ctx context.Context, token string) (entities.Session, error)
+	DeleteSession(ctx context.Context, token string) error
+	DeleteExpiredSessions(ctx context.Context) error
 }
 
 func NewUserService(storage Storage) *Service {

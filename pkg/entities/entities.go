@@ -52,9 +52,23 @@ type (
 		Address            string   `json:"address"`
 		RegistrationNumber string   `json:"registration_number"`
 	}
+
 	Location struct {
 		Department string `json:"department"`
 		District   string `json:"district"`
+	}
+
+	LoginRequest struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	Session struct {
+		SessionID int64     `json:"session_id"`
+		UserID    uint64    `json:"user_id"`
+		Token     string    `json:"token"`
+		CreatedAt time.Time `json:"created_at"`
+		ExpiresAt time.Time `json:"expires_at"`
 	}
 )
 

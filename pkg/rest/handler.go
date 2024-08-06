@@ -46,6 +46,12 @@ type (
 		GetProfessional(ctx context.Context, ID uint64) (domain.Professional, error)
 		FindProfessionalsByLocation(ctx context.Context, department string, district string) ([]domain.Professional, error)
 		FindProfessionalsByLocationAndProfession(ctx context.Context, department string, district string, profession string) ([]domain.Professional, error)
+		LoginUser(ctx context.Context, email string, password string) (domain.User, string, error)
+		LoginProfessional(ctx context.Context, email string, password string) (domain.Professional, string, error)
+		CreateSession(ctx context.Context, userID uint64) (string, error)
+		ValidateSession(ctx context.Context, token string) (entities.Session, error)
+		DeleteSession(ctx context.Context, token string) error
+		DeleteExpiredSessions(ctx context.Context) error
 	}
 )
 
