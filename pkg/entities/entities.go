@@ -190,7 +190,7 @@ func (rp RegisterProfessionalRequest) Validate() error {
 	}
 
 	switch strings.ToUpper(rp.Profession) {
-	case string(domain.Plomero), string(domain.Gasista), string(domain.Electricista):
+	case string(domain.Limpieza):
 		return nil
 	default:
 		return errors.ErrInvalidProfession

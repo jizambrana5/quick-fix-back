@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: quick-fix-back
-          image: gcr.io/quick-fix-431422/quick-fix-back
+          image: gcr.io/quick-fix-431422/quick-fix-back:v1.1.0 # Cambié a un tag específico
           ports:
             - containerPort: 8080
           env:

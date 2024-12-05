@@ -7,7 +7,7 @@ info:
 
 # SERVERS define base paths for the API
 servers:
-  - url: 'https://{scope}.quickfix-backend.com/'
+  - url: "https://{scope}.quickfix-backend.com/"
     description: Base path for endpoints depending on the scope
 
 # TAGS allow to group related endpoints
@@ -117,12 +117,12 @@ components:
           example: "password123"
         profession:
           type: string
-          example: "Plomero"
+          example: "Limpieza"
         description:
           type: string
           example: "Experienced plumber"
         location:
-          $ref: '#/components/schemas/Location'
+          $ref: "#/components/schemas/Location"
       required:
         - username
         - email
@@ -145,9 +145,9 @@ components:
           format: int64
           example: 2
         status:
-          $ref: '#/components/schemas/Status'
+          $ref: "#/components/schemas/Status"
         dates:
-          $ref: '#/components/schemas/Dates'
+          $ref: "#/components/schemas/Dates"
       required:
         - id
         - user_id
@@ -236,7 +236,7 @@ components:
           type: string
           example: "professional"
         profession:
-          $ref: '#/components/schemas/Profession'
+          $ref: "#/components/schemas/Profession"
         description:
           type: string
           example: "Experienced plumber"
@@ -249,7 +249,7 @@ components:
           format: date-time
           example: "2024-07-06T12:34:56Z"
         location:
-          $ref: '#/components/schemas/Location'
+          $ref: "#/components/schemas/Location"
       required:
         - id
         - username
@@ -267,6 +267,7 @@ components:
         - PLOMERO
         - GASISTA
         - ELECTRICISTA
+        - LIMPIEZA
       example: "PLOMERO"
 
     Location:
@@ -285,23 +286,23 @@ components:
 # PATHS define every endpoint
 paths:
   ## User & Professionals
-  '/user/{userID}':
+  "/user/{userID}":
     get:
       tags:
         - Users & Professionals
       summary: Get user information.
       parameters:
-        - $ref: '#/components/parameters/userIdParam'
+        - $ref: "#/components/parameters/userIdParam"
       responses:
-        '200':
+        "200":
           description: User data
           content:
             text/plain:
               schema:
-                $ref: '#/components/schemas/User'
-        '500':
+                $ref: "#/components/schemas/User"
+        "500":
           description: Internal server error.
-  '/user/':
+  "/user/":
     post:
       tags:
         - Users & Professionals
@@ -312,35 +313,35 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterUserRequest'
+              $ref: "#/components/schemas/RegisterUserRequest"
       responses:
-        '200':
+        "200":
           description: User data
           content:
             text/plain:
               schema:
-                $ref: '#/components/schemas/User'
-        '400':
+                $ref: "#/components/schemas/User"
+        "400":
           description: Bad Request.
-        '500':
+        "500":
           description: Internal server error.
-  '/professional/{professionalID}':
+  "/professional/{professionalID}":
     get:
       tags:
         - Users & Professionals
       summary: Get professional information.
       parameters:
-        - $ref: '#/components/parameters/professionalIdParam'
+        - $ref: "#/components/parameters/professionalIdParam"
       responses:
-        '200':
+        "200":
           description: Professional data
           content:
             text/plain:
               schema:
-                $ref: '#/components/schemas/Professional'
-        '500':
+                $ref: "#/components/schemas/Professional"
+        "500":
           description: Internal server error.
-  '/professional/':
+  "/professional/":
     post:
       tags:
         - Users & Professionals
@@ -351,73 +352,73 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterProfessionalRequest'
+              $ref: "#/components/schemas/RegisterProfessionalRequest"
       responses:
-        '200':
+        "200":
           description: Professional data
           content:
             text/plain:
               schema:
-                $ref: '#/components/schemas/Professional'
-        '400':
+                $ref: "#/components/schemas/Professional"
+        "400":
           description: Bad Request.
-        '500':
+        "500":
           description: Internal server error.
 
   ## Orders
-  '/orders/{orderID}':
+  "/orders/{orderID}":
     get:
       tags:
         - Order
       summary: Get order information.
       parameters:
-        - $ref: '#/components/parameters/orderIdParam'
+        - $ref: "#/components/parameters/orderIdParam"
       responses:
-        '200':
+        "200":
           description: Order data
           content:
             text/plain:
               schema:
-                $ref: '#/components/schemas/Order'
-        '500':
+                $ref: "#/components/schemas/Order"
+        "500":
           description: Internal server error.
-  '/orders/user/{userID}':
+  "/orders/user/{userID}":
     get:
       tags:
         - Order
       summary: Get order information by User ID.
       parameters:
-        - $ref: '#/components/parameters/userIdParam'
+        - $ref: "#/components/parameters/userIdParam"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Order'
-        '500':
+                  $ref: "#/components/schemas/Order"
+        "500":
           description: Internal server error.
-  '/orders/professional/{professionalID}':
+  "/orders/professional/{professionalID}":
     get:
       tags:
         - Order
       summary: Get order information by Professional ID.
       parameters:
-        - $ref: '#/components/parameters/professionalIdParam'
+        - $ref: "#/components/parameters/professionalIdParam"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Professional'
-        '500':
+                  $ref: "#/components/schemas/Professional"
+        "500":
           description: Internal server error.
-  '/orders/':
+  "/orders/":
     post:
       tags:
         - Order
@@ -427,84 +428,84 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateOrderRequest'
+              $ref: "#/components/schemas/CreateOrderRequest"
       responses:
-        '201':
+        "201":
           description: Order created successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Order'
-        '400':
+                $ref: "#/components/schemas/Order"
+        "400":
           description: Bad request. Invalid input data.
-        '500':
+        "500":
           description: Internal server error.
 
-  '/orders/{order_id}/accept':
-      put:
-        tags:
-          - Order
-        summary: Accept an order by order ID.
-        parameters:
-          - $ref: '#/components/parameters/orderIdParam'
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AdvanceOrderRequest'
-        responses:
-          '200':
-            description: Order accepted successfully.
-          '400':
-            description: Bad request. Invalid input data.
-          '404':
-            description: Order not found.
-          '500':
-            description: Internal server error.
+  "/orders/{order_id}/accept":
+    put:
+      tags:
+        - Order
+      summary: Accept an order by order ID.
+      parameters:
+        - $ref: "#/components/parameters/orderIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdvanceOrderRequest"
+      responses:
+        "200":
+          description: Order accepted successfully.
+        "400":
+          description: Bad request. Invalid input data.
+        "404":
+          description: Order not found.
+        "500":
+          description: Internal server error.
 
-  '/orders/{order_id}/complete':
-      put:
-        tags:
-          - Order
-        summary: Complete an order by order ID.
-        parameters:
-          - $ref: '#/components/parameters/orderIdParam'
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AdvanceOrderRequest'
-        responses:
-          '200':
-            description: Order completed successfully.
-          '400':
-            description: Bad request. Invalid input data.
-          '404':
-            description: Order not found.
-          '500':
-            description: Internal server error.
+  "/orders/{order_id}/complete":
+    put:
+      tags:
+        - Order
+      summary: Complete an order by order ID.
+      parameters:
+        - $ref: "#/components/parameters/orderIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdvanceOrderRequest"
+      responses:
+        "200":
+          description: Order completed successfully.
+        "400":
+          description: Bad request. Invalid input data.
+        "404":
+          description: Order not found.
+        "500":
+          description: Internal server error.
 
-  '/orders/{order_id}/cancel':
-      put:
-        tags:
-          - Order
-        summary: Cancel an order by order ID.
-        parameters:
-          - $ref: '#/components/parameters/orderIdParam'
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AdvanceOrderRequest'
-        responses:
-          '200':
-            description: Order canceled successfully.
-          '400':
-            description: Bad request. Invalid input data.
-          '404':
-            description: Order not found.
-          '500':
-            description: Internal server error.
+  "/orders/{order_id}/cancel":
+    put:
+      tags:
+        - Order
+      summary: Cancel an order by order ID.
+      parameters:
+        - $ref: "#/components/parameters/orderIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdvanceOrderRequest"
+      responses:
+        "200":
+          description: Order canceled successfully.
+        "400":
+          description: Bad request. Invalid input data.
+        "404":
+          description: Order not found.
+        "500":
+          description: Internal server error.

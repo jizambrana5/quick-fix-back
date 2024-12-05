@@ -2,10 +2,11 @@ package utils
 
 import (
 	"encoding/json"
-	"github.com/jizambrana5/quickfix-back/pkg/domain"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/jizambrana5/quickfix-back/pkg/domain"
 
 	"github.com/jizambrana5/quickfix-back/pkg/lib/errors"
 )
@@ -63,7 +64,7 @@ func GetLocations() (Locations, error) {
 
 func ValidateProfession(profession string) bool {
 	switch strings.ToUpper(profession) {
-	case string(domain.Plomero), string(domain.Gasista), string(domain.Electricista):
+	case string(domain.Limpieza):
 		return true
 	default:
 		return false
