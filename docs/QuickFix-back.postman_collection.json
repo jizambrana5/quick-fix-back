@@ -1,299 +1,233 @@
 {
-	"info": {
-		"_postman_id": "e47e0a2d-2fe8-46d5-acd5-47e52c9a3f18",
-		"name": "QuickFix-back",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "18511533",
-		"_collection_link": "https://lively-flare-628620.postman.co/workspace/My-Workspace~48556e77-d4bf-47a5-8f86-063d01d6dd87/collection/18511533-e47e0a2d-2fe8-46d5-acd5-47e52c9a3f18?action=share&source=collection_link&creator=18511533"
-	},
-	"item": [
-		{
-			"name": "Ping",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8081/ping",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"ping"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get order by ID",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/orders/f143c591-c4d2-4111-a5c2-3d7e106fdf14",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"orders",
-						"f143c591-c4d2-4111-a5c2-3d7e106fdf14"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get order by user ID",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/orders/user/1111",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"orders",
-						"user",
-						"1111"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get order by professional ID",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/orders/professional/1111",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"orders",
-						"professional",
-						"1111"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create order",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"user_id\": 7,\n    \"professional_id\": 2,\n    \"schedule_to\": \"2024-07-03 23:00\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/orders",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"orders"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Register user",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"username\": \"jose\",\n    \"email\": \"asd@asd.com\",\n    \"password\": \"123456\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/user",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"user"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get user by ID",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/user/1",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"user",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get professional by location",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/user/1",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"user",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get professional by location Copy",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/user/1",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"user",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Register professional",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"username\": \"jose\",\n    \"email\": \"asd@asd.com\",\n    \"password\": \"123456\",\n    \"profession\": \"plomero\",\n    \"location\":{\n        \"department\": \"godoy cruz\",\n        \"district\": \"Centro\"\n    }\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/professional",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"professional"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Accept order",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/orders/da3c9b3f-8f10-420c-aa10-6583fbe11282/accept",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"orders",
-						"da3c9b3f-8f10-420c-aa10-6583fbe11282",
-						"accept"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Complete order",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/orders/da3c9b3f-8f10-420c-aa10-6583fbe11282/complete",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"orders",
-						"da3c9b3f-8f10-420c-aa10-6583fbe11282",
-						"complete"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Cancel order",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/orders/da3c9b3f-8f10-420c-aa10-6583fbe11282/cancel",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"orders",
-						"da3c9b3f-8f10-420c-aa10-6583fbe11282",
-						"cancel"
-					]
-				}
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "_postman_id": "e47e0a2d-2fe8-46d5-acd5-47e52c9a3f18",
+    "name": "QuickFix-back",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "18511533",
+    "_collection_link": "https://lively-flare-628620.postman.co/workspace/My-Workspace~48556e77-d4bf-47a5-8f86-063d01d6dd87/collection/18511533-e47e0a2d-2fe8-46d5-acd5-47e52c9a3f18?action=share&source=collection_link&creator=18511533"
+  },
+  "item": [
+    {
+      "name": "Ping",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/ping",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["ping"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get order by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/orders/f143c591-c4d2-4111-a5c2-3d7e106fdf14",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["orders", "f143c591-c4d2-4111-a5c2-3d7e106fdf14"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get order by user ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/orders/user/1111",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["orders", "user", "1111"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get order by professional ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/orders/professional/1111",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["orders", "professional", "1111"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create order",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"user_id\": 7,\n    \"professional_id\": 2,\n    \"schedule_to\": \"2024-07-03 23:00\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/orders",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["orders"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register user",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"jose\",\n    \"email\": \"asd@asd.com\",\n    \"password\": \"123456\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/user",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["user"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get user by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/user/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["user", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get professional by location",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/user/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["user", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get professional by location Copy",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/user/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["user", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register professional",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"jose\",\n    \"email\": \"asd@asd.com\",\n    \"password\": \"123456\",\n    \"profession\": \"limpieza\",\n    \"location\":{\n        \"department\": \"godoy cruz\",\n        \"district\": \"Centro\"\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/professional",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["professional"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Accept order",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/orders/da3c9b3f-8f10-420c-aa10-6583fbe11282/accept",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["orders", "da3c9b3f-8f10-420c-aa10-6583fbe11282", "accept"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Complete order",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/orders/da3c9b3f-8f10-420c-aa10-6583fbe11282/complete",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["orders", "da3c9b3f-8f10-420c-aa10-6583fbe11282", "complete"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cancel order",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/orders/da3c9b3f-8f10-420c-aa10-6583fbe11282/cancel",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["orders", "da3c9b3f-8f10-420c-aa10-6583fbe11282", "cancel"]
+        }
+      },
+      "response": []
+    }
+  ]
 }

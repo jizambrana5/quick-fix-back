@@ -10,10 +10,10 @@ func Routes(h *Handler, userService UserService) *gin.Engine {
 
 	// Configuración de CORS
 	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
+	config.AllowOrigins = []string{"https://quick-fix-front.pages.dev", "https://api.quick-fix-front.pages.dev"}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
-	config.AllowCredentials = true
+	config.AllowCredentials = false
 
 	r.Use(cors.New(config))
 

@@ -14,9 +14,10 @@ const (
 	OrderStatusCancelled Status = "cancelled"
 	OrderStatusCreated   Status = "created"
 
-	Plomero      Profession = "PLOMERO"
-	Gasista      Profession = "GASISTA"
-	Electricista Profession = "ELECTRICISTA"
+	//Plomero      Profession = "PLOMERO"
+	//Gasista      Profession = "GASISTA"
+	//Electricista Profession = "ELECTRICISTA"
+	Limpieza Profession = "LIMPIEZA"
 )
 
 type (
